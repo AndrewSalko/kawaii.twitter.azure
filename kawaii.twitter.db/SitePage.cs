@@ -1,4 +1,5 @@
 using System;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace kawaii.twitter.db
 {
@@ -7,7 +8,8 @@ namespace kawaii.twitter.db
 	/// </summary>
 	public class SitePage
 	{
-	
+
+		[BsonIgnoreIfNull]
 		public string URL
 		{
 			get;
@@ -17,7 +19,8 @@ namespace kawaii.twitter.db
 		/// <summary>
 		/// Дата модификации страницы (по карте сайта)
 		/// </summary>
-		public DateTime LastModified
+		[BsonIgnoreIfNull]
+		public DateTime? LastModified
 		{
 			get;
 			set;
@@ -26,6 +29,7 @@ namespace kawaii.twitter.db
 		/// <summary>
 		/// Тайтл страницы
 		/// </summary>
+		[BsonIgnoreIfNull]
 		public string Title
 		{
 			get;
@@ -35,7 +39,8 @@ namespace kawaii.twitter.db
 		/// <summary>
 		/// Дата, когда мы твитили последний раз эту страницу
 		/// </summary>
-		public DateTime TweetDate
+		[BsonIgnoreIfNull]
+		public DateTime? TweetDate
 		{
 			get;
 			set;
