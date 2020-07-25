@@ -15,6 +15,11 @@ namespace kawaii.twitter.db
 		/// </summary>
 		public const string COLLECTION_SITE_PAGES = "SitePages";
 
+		/// <summary>
+		/// Коллекция анимированных gif-изображений
+		/// </summary>
+		public const string COLLECTION_ANIMATED_IMAGES = "AnimatedImages";
+
 		public Database(string connectionString, bool useSSL)
 		{
 			MongoClientSettings settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));

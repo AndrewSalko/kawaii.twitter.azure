@@ -4,3 +4,6 @@ packages
 .vs
 *.pdb
 *.csproj.user
+
+
+do_animated_sync.bat
