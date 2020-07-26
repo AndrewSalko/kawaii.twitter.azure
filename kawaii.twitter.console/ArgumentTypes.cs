@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace kawaii.twitter.blob.uploader
+namespace kawaii.twitter.console
 {
 	enum ArgumentTypes
 	{
@@ -16,7 +16,17 @@ namespace kawaii.twitter.blob.uploader
 		/// <summary>
 		/// Строка підключення до Azure Blob, де зберігаються gif-зображення
 		/// </summary>
-		AnimatedBlobsConnectionString = 2
+		AnimatedBlobsConnectionString = 2,
+
+		/// <summary>
+		/// Виконати до-завантаження бази
+		/// </summary>
+		UpdateDatabase=4,
+
+		/// <summary>
+		/// Строка підключення до Azure бази сторінок сайту (постів)
+		/// </summary>
+		SitePagesConnectionString=8
 
 	}
 }

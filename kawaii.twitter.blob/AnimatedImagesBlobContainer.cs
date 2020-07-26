@@ -23,6 +23,26 @@ namespace kawaii.twitter.blob
 			_ContainerClient = blobServiceClient.GetBlobContainerClient(CONTAINER_NAME);
 		}
 
+		public string[] GetBlobNames()
+		{
+			var blobs = _ContainerClient.GetBlobs();
+
+			List<string> names = new List<string>();
+
+			if (blobs != null)
+			{
+				foreach (var blob in blobs)
+				{
+					if (blob.Deleted)
+						continue;
+
+					names.Add(blob.Name);
+				}
+			}
+
+			return names.ToArray();
+		}
+
 		string _ComposeBlobName(string folderName, string fileName)
 		{
 			//Про найменування: https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata

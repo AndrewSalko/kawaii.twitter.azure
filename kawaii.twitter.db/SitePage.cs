@@ -55,6 +55,16 @@ namespace kawaii.twitter.db
 			set;
 		}
 
+		/// <summary>
+		/// Якщо пост необхідно показувати лише на окремому діапазоні часу (спец.дні - Хелловін, Різдво)
+		/// </summary>
+		[BsonIgnoreIfNull]
+		public string SpecialDay
+		{
+			get;
+			set;
+		}
+
 		public override string ToString()
 		{
 			return URL;

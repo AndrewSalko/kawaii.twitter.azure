@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "kawaii.twitter.blob.uploader": {
+    "kawaii.twitter.console": {
       "commandName": "Project"
     }
   }
