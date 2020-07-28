@@ -34,6 +34,7 @@ namespace kawaii.twitter.db
 			DB = mongoClient.GetDatabase(DATABASE_NAME);
 
 			SitePages = DB.GetCollection<SitePage>(COLLECTION_SITE_PAGES);
+			AnimatedImages = DB.GetCollection<AnimatedImage>(COLLECTION_ANIMATED_IMAGES);
 		}
 
 		public IMongoDatabase DB
@@ -43,6 +44,12 @@ namespace kawaii.twitter.db
 		}
 
 		public IMongoCollection<SitePage> SitePages
+		{
+			get;
+			private set;
+		}
+
+		public IMongoCollection<AnimatedImage> AnimatedImages
 		{
 			get;
 			private set;

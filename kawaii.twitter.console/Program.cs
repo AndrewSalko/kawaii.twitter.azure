@@ -79,8 +79,8 @@ namespace kawaii.twitter.console
 						Console.WriteLine("Updating database from blob objects...");
 						//виконати до-вантаження (або створити) базу анімованих зображень з наявних блоб-об'єктів
 
-						DatabaseUpdater upd = new DatabaseUpdater(azureBlobConnectionString);
-						upd.UpdateDataBase();
+						DatabaseUpdater upd = new DatabaseUpdater(azureBlobConnectionString, azureDBSitePagesConnectionString);
+						await upd.UpdateAnimatedBlobDataBase();
 					}
 					else
 					{

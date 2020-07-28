@@ -13,30 +13,10 @@ namespace kawaii.twitter.db
 	/// </summary>
 	public class AnimatedImage
 	{
-
 		/// <summary>
-		/// URL сайта, ассоциированный с этим изображением
-		/// </summary>
-		[BsonRequired]
-		public string URL
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Имя файла (без пути)
-		/// </summary>
-		[BsonRequired]
-		public string FileName
-		{
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Имя блоб-данных (где оно хранится). В простейшем случае это у нас имя файла, т.к. не ожидается что оно будет повторяться,
-		/// но мы добавим впереди "slug" от URL
+		/// Имя блоб-данных (где оно хранится). Формат: "slug:fileName"
+		/// Например для поста https://kawaii-mobile.com/2012/10/accel-world/
+		/// будет иметь вид:  accel-world:file1.gif
 		/// </summary>
 		[BsonRequired]
 		public string BlobName
@@ -45,14 +25,14 @@ namespace kawaii.twitter.db
 			set;
 		}
 
-		public static string GetBlobNameFromFileName(string fullFileName, string url)
+		/// <summary>
+		/// Дата, когда мы твитили это изображение
+		/// </summary>
+		[BsonIgnoreIfNull]
+		public DateTime? TweetDate
 		{
-			Uri uri = new Uri(url);
-			string slug = uri.Segments.Last();
-			string fileName = Path.GetFileName(fullFileName);
-
-			string result = slug + "_" + fileName;
-			return result;
+			get;
+			set;
 		}
 
 	}
