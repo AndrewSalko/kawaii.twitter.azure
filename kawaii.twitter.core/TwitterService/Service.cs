@@ -10,6 +10,9 @@ using LinqToTwitter;
 
 namespace kawaii.twitter.core.TwitterService
 {
+	/// <summary>
+	/// Створення твітів, працює з твіттер-API
+	/// </summary>
 	public class Service
 	{
 		const string _MEDIA_CATEGORY_IMAGE = "tweet_image";
@@ -17,54 +20,14 @@ namespace kawaii.twitter.core.TwitterService
 
 		const string _GIF_EXT = "gif";
 
-		const string _ENV_PREFIX = "env:";
+		public const string ENV_API_KEY = "kawaii_twitter_api_key";
+		public const string ENV_API_SECRET = "kawaii_twitter_api_secret";
+		public const string ENV_API_TOKEN = "kawaii_twitter_api_token";
+		public const string ENV_API_TOKEN_SECRET = "kawaii_twitter_api_token_secret";
 
-		const string _ENV_API_KEY = "env:kawaii_twitter_api_key";
-		const string _ENV_API_SECRET = "env:kawaii_twitter_api_secret";
-		const string _ENV_API_TOKEN = "env:kawaii_twitter_api_token";
-		const string _ENV_API_TOKEN_SECRET = "env:kawaii_twitter_api_token_secret";
-
-		TwitterContext _Context;
-
-		public Service(string twitterAPIKey, string twitterAPISecret, string twitterAccessToken, string twitterAccessTokenSecret)
+		public Service()
 		{
-			//string twitterAPIKey = _GetRealConfigValue(ConfigurationManager.AppSettings["TwitterAPIKey"]);
-			//string twitterAPISecret = _GetRealConfigValue(ConfigurationManager.AppSettings["TwitterAPISecret"]);
-
-			//string twitterAccessToken = _GetRealConfigValue(ConfigurationManager.AppSettings["TwitterAccessToken"]);
-			//string twitterAccessTokenSecret = _GetRealConfigValue(ConfigurationManager.AppSettings["TwitterAccessTokenSecret"]);
-
-			IAuthorizer auth = new SingleUserAuthorizer
-			{
-				CredentialStore = new SingleUserInMemoryCredentialStore
-				{
-					ConsumerKey = twitterAPIKey,
-					ConsumerSecret = twitterAPISecret,
-					AccessToken = twitterAccessToken,
-					AccessTokenSecret = twitterAccessTokenSecret
-				}
-			};
-
-			auth.AuthorizeAsync().Wait();
-
-			_Context = new TwitterContext(auth);
 		}
-
-		string _GetRealConfigValue(string valueToParse)
-		{
-			if (string.IsNullOrEmpty(valueToParse))
-				throw new ArgumentException("valueToParse IsNullOrEmpty", nameof(valueToParse));
-
-			//если строка значения начинается с текста env: то значит надо брать переменную среды
-			if (valueToParse.StartsWith(_ENV_PREFIX))
-			{
-				string envName = valueToParse.Replace(_ENV_PREFIX, string.Empty);
-				return	Environment.GetEnvironmentVariable(envName);
-			}
-
-			return valueToParse;
-		}
-
 
 		/// <summary>
 		/// Если вернул true, надо ждать минут 15 до след.вызова любого метода
@@ -86,9 +49,47 @@ namespace kawaii.twitter.core.TwitterService
 			}
 		}
 
-		public async Task TweetWithMedia(string tweetText, string imageFileName)
+		/// <summary>
+		/// Створити (запостити) твіт
+		/// </summary>
+		/// <param name="tweetText">Текст твіта</param>
+		/// <param name="imageFileName">Ім'я файлу (без шляху, для визначення розширення)</param>
+		/// <param name="imageFileBody">Тіло файлу</param>
+		/// <returns></returns>
+		public async Task TweetWithMedia(string tweetText, string imageFileName, byte[] imageFileBody)
 		{
-			byte[] fileBody = File.ReadAllBytes(imageFileName);
+			//Azure-функція має налаштування, які доступні як Environment-змінні
+
+			string twitterAPIKey = Environment.GetEnvironmentVariable(ENV_API_KEY);
+			if (string.IsNullOrEmpty(twitterAPIKey))
+				throw new KeyNotFoundException(ENV_API_KEY);
+
+			string twitterAPISecret = Environment.GetEnvironmentVariable(ENV_API_SECRET);
+			if (string.IsNullOrEmpty(twitterAPISecret))
+				throw new KeyNotFoundException(ENV_API_SECRET);
+
+			string twitterAccessToken = Environment.GetEnvironmentVariable(ENV_API_TOKEN);
+			if (string.IsNullOrEmpty(twitterAccessToken))
+				throw new KeyNotFoundException(ENV_API_TOKEN);
+
+			string twitterAccessTokenSecret = Environment.GetEnvironmentVariable(ENV_API_TOKEN_SECRET);
+			if (string.IsNullOrEmpty(twitterAccessTokenSecret))
+				throw new KeyNotFoundException(ENV_API_TOKEN_SECRET);
+
+			IAuthorizer auth = new SingleUserAuthorizer
+			{
+				CredentialStore = new SingleUserInMemoryCredentialStore
+				{
+					ConsumerKey = twitterAPIKey,
+					ConsumerSecret = twitterAPISecret,
+					AccessToken = twitterAccessToken,
+					AccessTokenSecret = twitterAccessTokenSecret
+				}
+			};
+
+			await auth.AuthorizeAsync();
+
+			var context = new TwitterContext(auth);
 
 			string mediaType = null;
 
@@ -112,7 +113,7 @@ namespace kawaii.twitter.core.TwitterService
 				throw new ApplicationException(msg);
 			}
 
-			var uploadTaskResult = await _Context.UploadMediaAsync(fileBody, mediaType, mediaCategory);
+			var uploadTaskResult = await context.UploadMediaAsync(imageFileBody, mediaType, mediaCategory);
 			var mediaID = uploadTaskResult.MediaID;
 
 			ulong[] mediaIDs = new ulong[] { mediaID };
@@ -120,7 +121,7 @@ namespace kawaii.twitter.core.TwitterService
 			//TODO@: можно даже задать alt-текст? неплохо изучить позже
 			//mediaIds.ForEach(async id => await twitterCtx.CreateMediaMetadataAsync(id, $"Test Alt Text for Media ID: {id}"));
 
-			var result = await _Context.TweetAsync(tweetText, mediaIDs);
+			var result = await context.TweetAsync(tweetText, mediaIDs);
 		}
 	}
 }
