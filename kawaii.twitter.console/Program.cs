@@ -15,10 +15,6 @@ namespace kawaii.twitter.console
 		{
 			Console.WriteLine("kawaii-mobile.com - console app to manual update");
 
-			//!!!!
-			System.Threading.Thread.Sleep(30000);
-			//!!!!
-
 			if (args == null || args.Length == 0)
 			{
 				Console.WriteLine("Usage:");
