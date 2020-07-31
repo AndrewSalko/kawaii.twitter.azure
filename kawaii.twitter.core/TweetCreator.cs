@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using kawaii.twitter.db;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;  //https://mongodb-documentation.readthedocs.io/en/latest/ecosystem/tutorial/use-linq-queries-with-csharp-driver.html#gsc.tab=0
 
 namespace kawaii.twitter.core
 {
@@ -10,6 +13,7 @@ namespace kawaii.twitter.core
 	/// </summary>
 	public class TweetCreator
 	{
+		public const int SELECT_POSTS_QUERY_MAX_COUNT = 25;
 
 		public async Task Execute()
 		{
@@ -69,6 +73,96 @@ namespace kawaii.twitter.core
 
 
 		}
+
+		async Task _GetPageForTwitting(IMongoCollection<SitePage> pages, IMongoCollection<AnimatedImage> animatedImages)
+		{
+			//В базе есть страницы для всех постов сайта. В некоторых случаях (но не всегда) к посту может быть дополнительно
+			//доступны N gif-анимированных изображений (они в отдельной коллекции)
+
+			//Мы будем твитить тех, кого "ни разу", в первую очередь, но только если они не блокированы и не принадлежат к спец-ивенту
+			//Спец.ивент - это Рождество (новогодние посты), и Хеллоуин - их твитить надо строго в опред.диапазоне времени
+
+			string currentSpecialDay = null;	//TODO@: вычислить ивент-время, и использовать в запросе
+
+			var pagesNotTwitted = (from page in pages.AsQueryable() where (!page.Blocked && page.TweetDate == null && page.SpecialDay==currentSpecialDay) select page).Take(SELECT_POSTS_QUERY_MAX_COUNT);
+
+			SitePage resultPage = null;
+
+			if (pagesNotTwitted != null)
+			{
+				var list= await pagesNotTwitted.ToListAsync();
+				if (list.Count > 0)
+				{
+					resultPage = _GetRandomPage(list);
+					//TODO@: return...
+				}
+			}
+
+			//Если попали сюда значит нет новых страниц, но может есть новые gif-файлы? (которые НИ разу не твитили)
+			AnimatedImage resultGif = null;
+
+			var gifsNotTwitted = (from gif in animatedImages.AsQueryable() where (gif.TweetDate == null) select gif).Take(SELECT_POSTS_QUERY_MAX_COUNT);
+			if (gifsNotTwitted != null)
+			{
+				var list = await gifsNotTwitted.ToListAsync();
+
+				if (list.Count > 0)
+				{
+					resultGif = _GetRandomPage(list);
+					//TODO@: return...
+				}
+			}
+
+			//на этом этапе у нас все страницы и все гифки уже твитились
+			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
+			long pagesCountLong = await pages.CountDocumentsAsync(x => !x.Blocked && x.SpecialDay == currentSpecialDay);
+			int pagesCount = (int)pagesCountLong;	//это не супер красиво, но на самом деле маловероятно что у нас будет так много данных в базе
+
+			//делаем рандом на это
+			Random rnd = new Random(Environment.TickCount);
+			int indForPage = rnd.Next(pagesCount);
+
+			//выбрать одну случайную страницу
+			var pagesRnd = await (from page in pages.AsQueryable() where (!page.Blocked && page.SpecialDay == currentSpecialDay) orderby page.TweetDate.Value select page).Skip(indForPage).Take(1).ToListAsync();
+			if (pagesRnd.Count > 0)
+			{
+				resultPage = pagesRnd[0];
+
+				//берем последнюю часть урла
+				Uri uri = new Uri(resultPage.URL);
+				string slug = uri.Segments[uri.Segments.Length - 1];
+				string slugForSearch = slug + ":";	//у нас имя блоба отделено от имени файла двоеточием (а первая часть это как раз посл.папка поста)
+
+				//уточняем насчет gifs - возможно они тоже есть для этого поста, и мы должны решить выбрать случайное изображение из него или гифку
+				var gifsForPage = await (from gif in animatedImages.AsQueryable() where (gif.BlobName.StartsWith(slugForSearch)) orderby gif.TweetDate.Value select gif).ToListAsync();
+				if (gifsForPage.Count > 0)
+				{
+					//TODO@: решим, кого показывать - эту гифку или что-то из поста
+				}
+			}
+
+
+
+		}//_GetPageForTwitting
+
+		AnimatedImage _GetRandomPage(IList<AnimatedImage> gifs)
+		{
+			Random rnd = new Random(Environment.TickCount);
+			int ind = rnd.Next(gifs.Count);
+
+			return gifs[ind];
+		}
+
+
+		SitePage _GetRandomPage(IList<SitePage> pages)
+		{
+			Random rnd = new Random(Environment.TickCount);
+			int ind = rnd.Next(pages.Count);
+
+			return pages[ind];
+		}
+
+
 
 		///// <summary>
 		///// Получить случайную страницу для твита-сообщения. В первую очередь берем случайно
