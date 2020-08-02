@@ -13,7 +13,7 @@ namespace kawaii.twitter.core.TwitterService
 	/// <summary>
 	/// Створення твітів, працює з твіттер-API
 	/// </summary>
-	public class Service
+	public class Service: IService
 	{
 		const string _MEDIA_CATEGORY_IMAGE = "tweet_image";
 		const string _MEDIA_CATEGORY_GIF = "tweet_gif";

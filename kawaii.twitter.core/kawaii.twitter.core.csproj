@@ -10,10 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TwitterService\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="linqtotwitter" Version="5.1.2" />
   </ItemGroup>
 

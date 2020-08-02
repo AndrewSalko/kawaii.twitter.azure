@@ -15,6 +15,31 @@ namespace kawaii.twitter.core
 	{
 		public const int SELECT_POSTS_QUERY_MAX_COUNT = 25;
 
+		/// <summary>
+		/// Знайде ті пости, які жодного разу не твітіли
+		/// </summary>
+		IPageSelector _PageSelectorForNewPages;
+
+		/// <summary>
+		/// Загальний механізм обрання поста для твітінгу
+		/// </summary>
+		IPageSelector _PageSelectorForAnyPages;
+
+		/// <summary>
+		/// Знайде ті gif-зображення, які ще не твітіли
+		/// </summary>
+		IAnimatedSelector _AnimatedSelectorForNewImages;
+
+		IFindPageByBlobName _FindPageByBlobName;
+
+		public TweetCreator(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages)
+		{
+			_PageSelectorForNewPages = pageSelectorForNewPages ?? throw new ArgumentNullException(nameof(pageSelectorForNewPages));
+			_AnimatedSelectorForNewImages= animatedSelectorForNewImages ?? throw new ArgumentNullException(nameof(animatedSelectorForNewImages));
+			_FindPageByBlobName = findPageByBlobName ?? throw new ArgumentNullException(nameof(findPageByBlobName));
+			_PageSelectorForAnyPages = pageSelectorForAnyPages ?? throw new ArgumentNullException(nameof(pageSelectorForAnyPages));
+		}
+
 		public async Task Execute()
 		{
 
@@ -74,7 +99,7 @@ namespace kawaii.twitter.core
 
 		}
 
-		async Task _GetPageForTwitting(IMongoCollection<SitePage> pages, IMongoCollection<AnimatedImage> animatedImages)
+		async Task<TwittData> _GetPageForTwitting(IMongoCollection<SitePage> pages, IMongoCollection<AnimatedImage> animatedImages)
 		{
 			//В базе есть страницы для всех постов сайта. В некоторых случаях (но не всегда) к посту может быть дополнительно
 			//доступны N gif-анимированных изображений (они в отдельной коллекции)
@@ -82,37 +107,47 @@ namespace kawaii.twitter.core
 			//Мы будем твитить тех, кого "ни разу", в первую очередь, но только если они не блокированы и не принадлежат к спец-ивенту
 			//Спец.ивент - это Рождество (новогодние посты), и Хеллоуин - их твитить надо строго в опред.диапазоне времени
 
-			string currentSpecialDay = null;	//TODO@: вычислить ивент-время, и использовать в запросе
+			TwittData result = new TwittData();
 
-			var pagesNotTwitted = (from page in pages.AsQueryable() where (!page.Blocked && page.TweetDate == null && page.SpecialDay==currentSpecialDay) select page).Take(SELECT_POSTS_QUERY_MAX_COUNT);
-
-			SitePage resultPage = null;
-
-			if (pagesNotTwitted != null)
+			SitePage page = await _PageSelectorForNewPages.GetPageForTwitting();
+			if (page != null)
 			{
-				var list= await pagesNotTwitted.ToListAsync();
-				if (list.Count > 0)
-				{
-					resultPage = _GetRandomPage(list);
-					//TODO@: return...
-				}
+				result.Page = page;
+				return result;
 			}
 
 			//Если попали сюда значит нет новых страниц, но может есть новые gif-файлы? (которые НИ разу не твитили)
-			AnimatedImage resultGif = null;
-
-			var gifsNotTwitted = (from gif in animatedImages.AsQueryable() where (gif.TweetDate == null) select gif).Take(SELECT_POSTS_QUERY_MAX_COUNT);
-			if (gifsNotTwitted != null)
+			AnimatedImage img = await _AnimatedSelectorForNewImages.GetAnimatedImageForTwitting();
+			if (img != null)
 			{
-				var list = await gifsNotTwitted.ToListAsync();
-
-				if (list.Count > 0)
+				//здесь нам все равно нужно найти страницу, просто изображение будет взято из аним.гифки что нашли
+				SitePage blobPage = await _FindPageByBlobName.Find(img.BlobName);
+				if (blobPage == null)
 				{
-					resultGif = _GetRandomPage(list);
-					//TODO@: return...
-				}
+					return null;	//TODO@: занотувати в лог що це проблема
+				}	
+
+				result.Page = blobPage;
+				result.Image = img;
+				return result;
 			}
 
+
+			//на этом этапе у нас все страницы и все гифки уже твитились
+			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
+
+			SitePage pageSelected = await _PageSelectorForAnyPages.GetPageForTwitting();
+			if (pageSelected != null)
+			{
+				//TODO@: получить связанные с ней аним.изображения
+
+
+
+			}
+
+
+
+			/*
 			//на этом этапе у нас все страницы и все гифки уже твитились
 			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
 			long pagesCountLong = await pages.CountDocumentsAsync(x => !x.Blocked && x.SpecialDay == currentSpecialDay);
@@ -140,28 +175,11 @@ namespace kawaii.twitter.core
 					//TODO@: решим, кого показывать - эту гифку или что-то из поста
 				}
 			}
+			*/
 
-
+			return null;
 
 		}//_GetPageForTwitting
-
-		AnimatedImage _GetRandomPage(IList<AnimatedImage> gifs)
-		{
-			Random rnd = new Random(Environment.TickCount);
-			int ind = rnd.Next(gifs.Count);
-
-			return gifs[ind];
-		}
-
-
-		SitePage _GetRandomPage(IList<SitePage> pages)
-		{
-			Random rnd = new Random(Environment.TickCount);
-			int ind = rnd.Next(pages.Count);
-
-			return pages[ind];
-		}
-
 
 
 		///// <summary>
