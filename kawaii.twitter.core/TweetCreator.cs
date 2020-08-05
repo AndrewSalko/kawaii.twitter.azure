@@ -30,14 +30,20 @@ namespace kawaii.twitter.core
 		/// </summary>
 		IAnimatedSelector _AnimatedSelectorForNewImages;
 
+		/// <summary>
+		/// Знаходить усі анім.зображення для вказаного посту (за url)
+		/// </summary>
+		IFindAnimatedByPage _FindAnimatedByPage;
+
 		IFindPageByBlobName _FindPageByBlobName;
 
-		public TweetCreator(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages)
+		public TweetCreator(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages, IFindAnimatedByPage findAnimatedByPage)
 		{
 			_PageSelectorForNewPages = pageSelectorForNewPages ?? throw new ArgumentNullException(nameof(pageSelectorForNewPages));
 			_AnimatedSelectorForNewImages= animatedSelectorForNewImages ?? throw new ArgumentNullException(nameof(animatedSelectorForNewImages));
 			_FindPageByBlobName = findPageByBlobName ?? throw new ArgumentNullException(nameof(findPageByBlobName));
 			_PageSelectorForAnyPages = pageSelectorForAnyPages ?? throw new ArgumentNullException(nameof(pageSelectorForAnyPages));
+			_FindAnimatedByPage = findAnimatedByPage ?? throw new ArgumentNullException(nameof(findAnimatedByPage));
 		}
 
 		public async Task Execute()
@@ -135,13 +141,24 @@ namespace kawaii.twitter.core
 
 			//на этом этапе у нас все страницы и все гифки уже твитились
 			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
-
+			//Здесь селектор должен быть умен в плане предлагать вначале более "старо-твиченные посты"
 			SitePage pageSelected = await _PageSelectorForAnyPages.GetPageForTwitting();
 			if (pageSelected != null)
 			{
-				//TODO@: получить связанные с ней аним.изображения
+				//получить связанные с ней аним.изображения, и если они есть, решить - будем показывать аним.изображение или изображение из поста (случайное)
+				AnimatedImage[] imgsForPage = await _FindAnimatedByPage.GetAnimatedImagesForPage(pageSelected.URL);
+				if (imgsForPage != null && imgsForPage.Length > 0)
+				{
+					//теперь решаем: то ли просто страница , то ли используем аним.изображение что нашли.
+					//Это сделает для нас спец.класс
 
-
+				}
+				else
+				{
+					//просто страницу
+					result.Page = pageSelected;
+					return result;
+				}
 
 			}
 
