@@ -13,280 +13,29 @@ namespace kawaii.twitter.core
 	/// </summary>
 	public class TweetCreator
 	{
-		public const int SELECT_POSTS_QUERY_MAX_COUNT = 25;
 
-		/// <summary>
-		/// Знайде ті пости, які жодного разу не твітіли
-		/// </summary>
-		IPageSelector _PageSelectorForNewPages;
-
-		/// <summary>
-		/// Загальний механізм обрання поста для твітінгу
-		/// </summary>
-		IPageSelector _PageSelectorForAnyPages;
-
-		/// <summary>
-		/// Знайде ті gif-зображення, які ще не твітіли
-		/// </summary>
-		IAnimatedSelector _AnimatedSelectorForNewImages;
-
-		/// <summary>
-		/// Знаходить усі анім.зображення для вказаного посту (за url)
-		/// </summary>
-		IFindAnimatedByPage _FindAnimatedByPage;
-
-		IFindPageByBlobName _FindPageByBlobName;
-
-		public TweetCreator(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages, IFindAnimatedByPage findAnimatedByPage)
+		public TweetCreator()
 		{
-			_PageSelectorForNewPages = pageSelectorForNewPages ?? throw new ArgumentNullException(nameof(pageSelectorForNewPages));
-			_AnimatedSelectorForNewImages= animatedSelectorForNewImages ?? throw new ArgumentNullException(nameof(animatedSelectorForNewImages));
-			_FindPageByBlobName = findPageByBlobName ?? throw new ArgumentNullException(nameof(findPageByBlobName));
-			_PageSelectorForAnyPages = pageSelectorForAnyPages ?? throw new ArgumentNullException(nameof(pageSelectorForAnyPages));
-			_FindAnimatedByPage = findAnimatedByPage ?? throw new ArgumentNullException(nameof(findAnimatedByPage));
 		}
 
-		public async Task Execute()
-		{
-
-			/*
-			var page = _GetPageForTwitting();
-			if (page == null)
-				throw new ApplicationException("_GetPageForTwitting returns null");
-
-
-			//получить "скачанный" файл-картинку для твита (или null если с этим проблемы)
-			string fileImgName = page.ImageFileName;
-			if (string.IsNullOrWhiteSpace(fileImgName))
-			{
-				Log("Не вдалося отримати зображення з {0}", page);
-				continue;
-			}
-
-			//делаем твит...
-			string tweetText = page.CreateTwitterText();
-
-			//твит с медиа и текстом
-			try
-			{
-				_Service.TweetWithMedia(tweetText, fileImgName);
-			}
-			catch (Exception ex)
-			{
-				Log("Помилка для {0}: {1}", page, ex.Message);
-
-				//спим 1 минуту, и пробуем еще раз
-				System.Threading.Thread.Sleep(6000);
-
-				continue;
-			}
-
-			page.TweetDate = dt;
-
-			//сохранить в базу сведения о том, что мы уже твитили
-			_Data.SubmitChanges();
-			_DataImages.SubmitChanges();
-			*/
-
-			string imageFileName = "";		//TODO@: имя файла (может быть gif, jpg...)
-			byte[] imageBody = null;		//TODO@: тело файла загрузить в память целиком (он все же, не более пару МБ, переживет)
-
-
-			string url = "https://........";	//TODO@: урл поста
-			string postTitle = "Some title";    //TODO@: тайтл поста
-
-			var textCreator = new Text.TwitterTextCreator();
-			string tweetText = textCreator.CreateTwitterText(url, postTitle);
-
-			var service = new TwitterService.Service();
-
-			await service.TweetWithMedia(tweetText, imageFileName, imageBody);
-
-
-		}
-
-		async Task<TwittData> _GetPageForTwitting(IMongoCollection<SitePage> pages, IMongoCollection<AnimatedImage> animatedImages)
-		{
-			//В базе есть страницы для всех постов сайта. В некоторых случаях (но не всегда) к посту может быть дополнительно
-			//доступны N gif-анимированных изображений (они в отдельной коллекции)
-
-			//Мы будем твитить тех, кого "ни разу", в первую очередь, но только если они не блокированы и не принадлежат к спец-ивенту
-			//Спец.ивент - это Рождество (новогодние посты), и Хеллоуин - их твитить надо строго в опред.диапазоне времени
-
-			TwittData result = new TwittData();
-
-			SitePage page = await _PageSelectorForNewPages.GetPageForTwitting();
-			if (page != null)
-			{
-				result.Page = page;
-				return result;
-			}
-
-			//Если попали сюда значит нет новых страниц, но может есть новые gif-файлы? (которые НИ разу не твитили)
-			AnimatedImage img = await _AnimatedSelectorForNewImages.GetAnimatedImageForTwitting();
-			if (img != null)
-			{
-				//здесь нам все равно нужно найти страницу, просто изображение будет взято из аним.гифки что нашли
-				SitePage blobPage = await _FindPageByBlobName.Find(img.BlobName);
-				if (blobPage == null)
-				{
-					return null;	//TODO@: занотувати в лог що це проблема
-				}	
-
-				result.Page = blobPage;
-				result.Image = img;
-				return result;
-			}
-
-
-			//на этом этапе у нас все страницы и все гифки уже твитились
-			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
-			//Здесь селектор должен быть умен в плане предлагать вначале более "старо-твиченные посты"
-			SitePage pageSelected = await _PageSelectorForAnyPages.GetPageForTwitting();
-			if (pageSelected != null)
-			{
-				//получить связанные с ней аним.изображения, и если они есть, решить - будем показывать аним.изображение или изображение из поста (случайное)
-				AnimatedImage[] imgsForPage = await _FindAnimatedByPage.GetAnimatedImagesForPage(pageSelected.URL);
-				if (imgsForPage != null && imgsForPage.Length > 0)
-				{
-					//теперь решаем: то ли просто страница , то ли используем аним.изображение что нашли.
-					//Это сделает для нас спец.класс
-
-				}
-				else
-				{
-					//просто страницу
-					result.Page = pageSelected;
-					return result;
-				}
-
-			}
-
-
-
-			/*
-			//на этом этапе у нас все страницы и все гифки уже твитились
-			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
-			long pagesCountLong = await pages.CountDocumentsAsync(x => !x.Blocked && x.SpecialDay == currentSpecialDay);
-			int pagesCount = (int)pagesCountLong;	//это не супер красиво, но на самом деле маловероятно что у нас будет так много данных в базе
-
-			//делаем рандом на это
-			Random rnd = new Random(Environment.TickCount);
-			int indForPage = rnd.Next(pagesCount);
-
-			//выбрать одну случайную страницу
-			var pagesRnd = await (from page in pages.AsQueryable() where (!page.Blocked && page.SpecialDay == currentSpecialDay) orderby page.TweetDate.Value select page).Skip(indForPage).Take(1).ToListAsync();
-			if (pagesRnd.Count > 0)
-			{
-				resultPage = pagesRnd[0];
-
-				//берем последнюю часть урла
-				Uri uri = new Uri(resultPage.URL);
-				string slug = uri.Segments[uri.Segments.Length - 1];
-				string slugForSearch = slug + ":";	//у нас имя блоба отделено от имени файла двоеточием (а первая часть это как раз посл.папка поста)
-
-				//уточняем насчет gifs - возможно они тоже есть для этого поста, и мы должны решить выбрать случайное изображение из него или гифку
-				var gifsForPage = await (from gif in animatedImages.AsQueryable() where (gif.BlobName.StartsWith(slugForSearch)) orderby gif.TweetDate.Value select gif).ToListAsync();
-				if (gifsForPage.Count > 0)
-				{
-					//TODO@: решим, кого показывать - эту гифку или что-то из поста
-				}
-			}
-			*/
-
-			return null;
-
-		}//_GetPageForTwitting
-
-
-		///// <summary>
-		///// Получить случайную страницу для твита-сообщения. В первую очередь берем случайно
-		///// из тех, кого не твитили вообще, затем - те что твитили но давно.
-		///// Также берет из базы gif-изображения
-		///// </summary>
-		///// <returns></returns>
-		//ITwittable _GetPageForTwitting()
+		//public async Task Execute()
 		//{
-		//	//получить список страниц которые ни разу не твиттили
-		//	var pagesNotTwitted = (from page in _Data.Pages where (!page.Blocked && page.TweetDate == null) select page).ToArray();
-		//	var gifsNotTwitted = (from pageGif in _DataImages.Images where (pageGif.TweetDate == null) select pageGif).ToArray();
 
-		//	//взять случайную страницу из тех, кого еще ни разу НЕ пускали в твиттер
-		//	if (pagesNotTwitted != null && pagesNotTwitted.Length > 0)
-		//	{
-		//		return _GetRandomPage(pagesNotTwitted, 0);
-		//	}
+		//	string imageFileName = "";		//TODO@: имя файла (может быть gif, jpg...)
+		//	byte[] imageBody = null;		//TODO@: тело файла загрузить в память целиком (он все же, не более пару МБ, переживет)
 
-		//	//Если попали сюда значит нет новых страниц, но может есть новые gif-файлы? (которые НИ разу не твитили)
-		//	if (gifsNotTwitted != null && gifsNotTwitted.Length > 0)
-		//	{
-		//		return _GetRandomPage(gifsNotTwitted, 0);
-		//	}
 
-		//	//на этом этапе у нас все страницы и все гифки уже твитились. Собрать в кучу, выбрать кого твитили давно, выбрать случаное
-		//	List<ITwittable> normPagesAndGifs = new List<ITwittable>();
+		//	string url = "https://........";	//TODO@: урл поста
+		//	string postTitle = "Some title";    //TODO@: тайтл поста
 
-		//	var twittedPages = (from page in _Data.Pages where (!page.Blocked && page.TweetDate != null) orderby page.TweetDate.Value select page).ToArray();
-		//	if (twittedPages != null && twittedPages.Length > 0)
-		//	{
-		//		normPagesAndGifs.AddRange(twittedPages);
-		//	}
+		//	var textCreator = new Text.TwitterTextCreator();
+		//	string tweetText = textCreator.CreateTwitterText(url, postTitle);
 
-		//	var twittedImages = (from page in _DataImages.Images where (page.TweetDate != null) orderby page.TweetDate.Value select page).ToArray();
-		//	if (twittedImages != null && twittedImages.Length > 0)
-		//	{
-		//		normPagesAndGifs.AddRange(twittedImages);
-		//	}
+		//	var service = new TwitterService.Service();
 
-		//	var result = normPagesAndGifs.OrderBy(pg => pg.TweetDate).ToArray();
-
-		//	return _GetRandomPage(result, 30);//выбор из топ-30
+		//	await service.TweetWithMedia(tweetText, imageFileName, imageBody);
 		//}
 
-		//ITwittable _GetRandomPage(ITwittable[] pages, int maxRandomIndex)
-		//{
-		//	if (pages == null || pages.Length == 0)
-		//		throw new ArgumentNullException("pages");
-
-		//	if (maxRandomIndex <= 0)
-		//	{
-		//		maxRandomIndex = pages.Length;
-		//	}
-		//	else
-		//	{
-		//		if (pages.Length < maxRandomIndex)
-		//			maxRandomIndex = pages.Length;
-		//	}
-
-		//	Random rnd = new Random(Environment.TickCount);
-		//	int ind = rnd.Next(maxRandomIndex);
-
-		//	ITwittable result = pages[ind];
-		//	IMediaImage resultImg = result as IMediaImage;
-		//	if (resultImg != null && resultImg.Page == null)
-		//	{
-		//		//найти связанный пост для изображения. 
-		//		string urlSlug = resultImg.GetURLSlug();
-
-		//		var foundPages = (from page in _Data.Pages where (page.URL.EndsWith(urlSlug)) select page).ToArray();
-		//		if (foundPages == null || foundPages.Length == 0)
-		//		{
-		//			throw new ApplicationException(string.Format("Не знайдено сторінку для зображення: slug={0}", urlSlug));
-		//		}
-		//		else
-		//		{
-		//			if (foundPages.Length > 1)
-		//			{
-		//				throw new ApplicationException(string.Format("Знайдено більш однієї сторінки для зображення: slug={0}", urlSlug));
-		//			}
-
-		//			resultImg.Page = foundPages[0];
-		//		}
-
-		//	}
-
-		//	return result;
-		//}
 
 	}
 }

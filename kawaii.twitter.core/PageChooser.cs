@@ -2,25 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using kawaii.twitter.core.SelectLogic.Randomize;
 using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 namespace kawaii.twitter.core
 {
-	class PageSelector: IPageSelector
+	/// <summary>
+	/// TODO@: пересмотреть назначение
+	/// </summary>
+	class PageChooser
 	{
 		IMongoCollection<SitePage> _Pages;
-		int _TopQueryCount;
 		IRandomSelector _RandomSelector;
 
-		public PageSelector(IMongoCollection<SitePage> pages, int topQueryCount, IRandomSelector randomSelector)
+		public PageChooser(IMongoCollection<SitePage> pages, int topQueryCount, IRandomSelector randomSelector)
 		{
 			if (topQueryCount <= 0)
 				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));
 
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
-			_TopQueryCount = topQueryCount;
 			_RandomSelector = randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
 		}
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using kawaii.twitter.db;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic
 {
 	public class TwittData
 	{

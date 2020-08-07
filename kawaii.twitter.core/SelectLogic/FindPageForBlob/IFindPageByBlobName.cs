@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.db;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic.FindPageForBlob
 {
-	public interface IFindAnimatedByPage
+	public interface IFindPageByBlobName
 	{
-		Task<AnimatedImage[]> GetAnimatedImagesForPage(string pageURL);
+		Task<SitePage> Find(string blobName);
 	}
 }

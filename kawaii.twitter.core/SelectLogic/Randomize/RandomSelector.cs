@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic.Randomize
 {
 	class RandomSelector: IRandomSelector
 	{

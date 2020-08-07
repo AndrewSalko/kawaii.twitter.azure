@@ -6,7 +6,7 @@ using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic.FindPageForBlob
 {
 	class FindPageByBlobName: IFindPageByBlobName
 	{

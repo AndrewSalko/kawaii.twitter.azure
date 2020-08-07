@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using kawaii.twitter.core.SelectLogic.Randomize;
 using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic.FindExternal
 {
 	/// <summary>
 	/// Получает связанный с заданным url набор аним.изображений

@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.db;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic
 {
-	public interface IFindPageByBlobName
+	public interface IAnimatedSelector
 	{
-		Task<SitePage> Find(string blobName);
+		Task<AnimatedImage> GetAnimatedImageForTwitting();
 	}
 }
