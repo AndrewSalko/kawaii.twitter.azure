@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kawaii.twitter.db", "kawaii
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kawaii.twitter.blob", "kawaii.twitter.blob\kawaii.twitter.blob.csproj", "{FF684C8E-968E-43D3-87E9-D40DF243E060}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kawaii.twitter.console", "kawaii.twitter.console\kawaii.twitter.console.csproj", "{7C92D15B-26A8-4A3F-9721-2D0C03B14780}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kawaii.twitter.console", "kawaii.twitter.console\kawaii.twitter.console.csproj", "{7C92D15B-26A8-4A3F-9721-2D0C03B14780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kawaii.twitter.core.tests", "kawaii.twitter.core.tests\kawaii.twitter.core.tests.csproj", "{6E3282C3-2C47-47B0-A5C8-06666BF7104F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{7C92D15B-26A8-4A3F-9721-2D0C03B14780}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C92D15B-26A8-4A3F-9721-2D0C03B14780}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C92D15B-26A8-4A3F-9721-2D0C03B14780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E3282C3-2C47-47B0-A5C8-06666BF7104F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E3282C3-2C47-47B0-A5C8-06666BF7104F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E3282C3-2C47-47B0-A5C8-06666BF7104F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E3282C3-2C47-47B0-A5C8-06666BF7104F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
