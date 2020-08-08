@@ -7,17 +7,17 @@ using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic.Page
 {
 	/// <summary>
-	/// TODO@: пересмотреть назначение
+	/// Выбирает из всех страниц одну случайным образом, но среди тех кого не твитили достаточно давно
 	/// </summary>
-	class PageChooser
+	public class PageSelector: IPageSelector
 	{
 		IMongoCollection<SitePage> _Pages;
 		IRandomSelector _RandomSelector;
 
-		public PageChooser(IMongoCollection<SitePage> pages, int topQueryCount, IRandomSelector randomSelector)
+		public PageSelector(IMongoCollection<SitePage> pages, int topQueryCount, IRandomSelector randomSelector)
 		{
 			if (topQueryCount <= 0)
 				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));

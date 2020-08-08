@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.db;
 
-namespace kawaii.twitter.core.SelectLogic
+namespace kawaii.twitter.core.SelectLogic.Images
 {
 	public interface IAnimatedSelector
 	{

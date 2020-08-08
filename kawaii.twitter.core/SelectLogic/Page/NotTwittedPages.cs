@@ -8,7 +8,7 @@ using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace kawaii.twitter.core
+namespace kawaii.twitter.core.SelectLogic.Page
 {
 	/// <summary>
 	/// Знаходить у базі нові пости, які ще жодного разу не твітіли

@@ -7,7 +7,7 @@ using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace kawaii.twitter.core.SelectLogic.ExternalImages
+namespace kawaii.twitter.core.SelectLogic.Images
 {
 	public class NotTwittedAnimated : IAnimatedSelector
 	{

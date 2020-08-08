@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using kawaii.twitter.db;
 
-namespace kawaii.twitter.core.SelectLogic.AnimatedExcludeLast
+namespace kawaii.twitter.core.SelectLogic.Images.ExcludeUsed
 {
 	class AnimatedSelectorWithExcludeLast: IAnimatedSelectorWithExcludeLast
 	{

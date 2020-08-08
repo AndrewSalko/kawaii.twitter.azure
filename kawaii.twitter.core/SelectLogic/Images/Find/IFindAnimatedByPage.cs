@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.db;
 
-namespace kawaii.twitter.core.SelectLogic.FindExternal
+namespace kawaii.twitter.core.SelectLogic.Images.Find
 {
 	public interface IFindAnimatedByPage
 	{

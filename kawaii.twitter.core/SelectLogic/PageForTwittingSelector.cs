@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using kawaii.twitter.core.SelectLogic.AnimatedExcludeLast;
-using kawaii.twitter.core.SelectLogic.FindExternal;
 using kawaii.twitter.core.SelectLogic.FindPageForBlob;
+using kawaii.twitter.core.SelectLogic.Images;
+using kawaii.twitter.core.SelectLogic.Images.ExcludeUsed;
+using kawaii.twitter.core.SelectLogic.Images.Find;
+using kawaii.twitter.core.SelectLogic.Page;
 using kawaii.twitter.core.SelectLogic.PageOrExternalImage;
 using kawaii.twitter.db;
 

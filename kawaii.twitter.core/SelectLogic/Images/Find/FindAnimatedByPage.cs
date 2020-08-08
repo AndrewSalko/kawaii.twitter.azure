@@ -8,7 +8,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 
-namespace kawaii.twitter.core.SelectLogic.FindExternal
+namespace kawaii.twitter.core.SelectLogic.Images.Find
 {
 	/// <summary>
 	/// Получает связанный с заданным url набор аним.изображений
