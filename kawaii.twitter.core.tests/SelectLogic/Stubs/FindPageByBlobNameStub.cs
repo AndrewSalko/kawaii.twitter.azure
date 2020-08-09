@@ -7,11 +7,31 @@ using kawaii.twitter.db;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 {
-	class FindPageByBlobNameStub : IFindPageByBlobName
+	class FindPageByBlobNameStub : BaseStubWithImpl, IFindPageByBlobName
 	{
-		public Task<SitePage> Find(string blobName)
+		public SitePage Result
 		{
-			throw new NotImplementedException();
+			get;
+			set;
+		}
+
+		public string UsedBlobNameForFind
+		{
+			get;
+			private set;
+		}
+
+		public async Task<SitePage> Find(string blobName)
+		{
+			if (!DontThrowNotImpl)
+				throw new NotImplementedException();
+
+			UsedBlobNameForFind = blobName;	//для само-проверки
+
+			return await Task.Run(() =>
+			{
+				return Result;
+			});
 		}
 	}
 }

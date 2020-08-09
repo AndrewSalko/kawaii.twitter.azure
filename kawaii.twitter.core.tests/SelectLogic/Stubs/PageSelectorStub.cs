@@ -7,11 +7,23 @@ using kawaii.twitter.db;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 {
-	class PageSelectorStub : IPageSelector
+	class PageSelectorStub : BaseStubWithImpl, IPageSelector
 	{
-		public Task<SitePage> GetPageForTwitting()
+		public SitePage Result
 		{
-			throw new NotImplementedException();
+			get;
+			set;
+		}
+
+		public async Task<SitePage> GetPageForTwitting()
+		{
+			if (!DontThrowNotImpl)
+				throw new NotImplementedException();
+
+			return await Task.Run(() =>
+			{
+				return Result;
+			});
 		}
 	}
 }

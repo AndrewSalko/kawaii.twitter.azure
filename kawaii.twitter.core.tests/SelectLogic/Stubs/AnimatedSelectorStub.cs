@@ -7,11 +7,23 @@ using kawaii.twitter.db;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 {
-	class AnimatedSelectorStub : IAnimatedSelector
+	class AnimatedSelectorStub : BaseStubWithImpl, IAnimatedSelector
 	{
-		public Task<AnimatedImage> GetAnimatedImageForTwitting()
+		public AnimatedImage Result
 		{
-			throw new NotImplementedException();
+			get;
+			set;
+		}
+
+		public async Task<AnimatedImage> GetAnimatedImageForTwitting()
+		{
+			if (!DontThrowNotImpl)
+				throw new NotImplementedException();
+
+			return await Task.Run(() =>
+			{
+				return Result;
+			});
 		}
 	}
 }
