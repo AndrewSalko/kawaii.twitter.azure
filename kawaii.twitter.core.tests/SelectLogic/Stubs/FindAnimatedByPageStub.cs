@@ -7,11 +7,31 @@ using kawaii.twitter.db;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 {
-	class FindAnimatedByPageStub : IFindAnimatedByPage
+	class FindAnimatedByPageStub : BaseStubWithImpl, IFindAnimatedByPage
 	{
-		public Task<AnimatedImage[]> GetAnimatedImagesForPage(string pageURL)
+		public AnimatedImage[] Result
 		{
-			throw new NotImplementedException();
+			get;
+			set;
+		}
+
+		public string RequestedURL
+		{
+			get;
+			set;
+		}
+
+		public async Task<AnimatedImage[]> GetAnimatedImagesForPage(string pageURL)
+		{
+			if (!DontThrowNotImpl)
+				throw new NotImplementedException();
+
+			RequestedURL = pageURL;
+
+			return await Task.Run(() =>
+			{
+				return Result;
+			});
 		}
 	}
 }

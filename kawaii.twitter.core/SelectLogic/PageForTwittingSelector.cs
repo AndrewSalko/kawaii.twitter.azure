@@ -92,7 +92,7 @@ namespace kawaii.twitter.core.SelectLogic
 				SitePage blobPage = await _FindPageByBlobName.Find(img.BlobName);
 				if (blobPage == null)
 				{
-					return null;    //TODO@: занотувати в лог що це проблема (img.BlobName)
+					throw new ApplicationException("Find page by blob name failed for:" + img.BlobName);
 				}
 
 				TwittData result = new TwittData
