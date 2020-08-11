@@ -109,7 +109,9 @@ namespace kawaii.twitter.core.SelectLogic
 			SitePage pageSelected = await _PageSelectorForAnyPages.GetPageForTwitting();
 
 			if (pageSelected == null)
-				return null;    //это правда необычно..скорее ошибка
+			{
+				throw new ApplicationException("No page found for twitting");	//это правда необычно..скорее ошибка т.к. база ведь не пустая
+			}
 
 			//получить связанные с ней аним.изображения, и если они есть, решить - будем показывать аним.изображение или изображение из поста (случайное)
 			//(здесь плохо то, что весь массив imgsForPage в памяти..но пока их не слишком много это не проблема)

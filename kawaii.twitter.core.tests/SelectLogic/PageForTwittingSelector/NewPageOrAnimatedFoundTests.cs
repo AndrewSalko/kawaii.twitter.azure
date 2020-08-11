@@ -124,5 +124,69 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			Assert.AreSame(animatedImage, result.Image);
 		}
 
+		[TestMethod]
+		[Description("Новых страниц нет, но найдено новое аним.изображение, однако поиск страницы для него вернул null - выброс исключения")]
+		[TestCategory("PageForTwittingSelector")]
+		public void NewAnimated_FindPageByBlobName_Returns_Null_Exception()
+		{
+			var stub = new Stubs.PageSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = null   //в этом тесте новых страниц нет, поэтому первый селектор вернет null
+			};
+
+			IPageSelector pageSelectorForNewPages = stub;
+
+			//это часть урла, а блоб всегда содержит в начале такое же (до двоеточия)
+			string codeGeassURLPart = "code-geass";
+
+			//а главную "роль" в тесте исполнит селектор новых аним.изображений - он должен вернуть
+			AnimatedImage animatedImage = new AnimatedImage
+			{
+				BlobName = "code-geass:img1.gif",
+				TweetDate = null //гифка новая даты твита не должно быть
+			};
+
+			var animNewStub = new Stubs.AnimatedSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = animatedImage  //стаб вернет этот результат
+			};
+
+			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+
+			//в этом тесте ожидается работа стаба FindPageByBlobNameStub - он должен НЕ найти страницу по имени блоба (вернуть null)
+			//и это приведет в итоге к исключению
+			var findPageByBlob = new Stubs.FindPageByBlobNameStub
+			{
+				DontThrowNotImpl = true,
+				Result = null
+			};
+
+			//имитируем найденную страницу...
+			IFindPageByBlobName findPageByBlobName = findPageByBlob;
+
+			IPageSelector pageSelectorForAnyPages = new Stubs.PageSelectorStub();
+			IFindAnimatedByPage findAnimatedByPage = new Stubs.FindAnimatedByPageStub();
+			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
+			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
+
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast);
+
+			try
+			{
+				TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
+			}
+			catch (AggregateException aggrEx)
+			{
+				ApplicationException appEx = (ApplicationException)aggrEx.InnerExceptions[0];
+
+				//это и должно было произойти. В тексте наш спец.текст
+				Assert.IsTrue(appEx.Message.Contains("Find page by blob name failed for"));
+				Assert.IsTrue(appEx.Message.Contains(codeGeassURLPart));
+			}
+
+		}
+
 	}
 }

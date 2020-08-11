@@ -104,6 +104,67 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 		}
 
 
+		[TestMethod]
+		[Description("Новых страниц нет, и выбор любой страницы дает null - ошибка")]
+		[TestCategory("PageForTwittingSelector")]
+		public void No_Page_For_Twitting()
+		{
+			//этот аналог важен для покрытия кода
+
+			var stubNewPages = new Stubs.PageSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = null
+			};
+
+			//этот стаб вернет null (нет новых аним.изображений)
+			var animNewStub = new Stubs.AnimatedSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = null
+			};
+
+			IPageSelector pageSelectorForNewPages = stubNewPages;
+			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+
+			IFindPageByBlobName findPageByBlobName = new Stubs.FindPageByBlobNameStub();
+
+			var stubAnyPages = new Stubs.PageSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = null	//Это ситуация которую моделирует тест - такое не должно быть в реальной системе (и будет выброс исключения)
+			};
+			IPageSelector pageSelectorForAnyPages = stubAnyPages;
+
+			//в нашем тесте этот универсальный поиск выдает null (нет аним.изображений для страницы)
+			var stubFindAnimated = new Stubs.FindAnimatedByPageStub
+			{
+				DontThrowNotImpl = true,
+				Result = null
+			};
+
+			IFindAnimatedByPage findAnimatedByPage = stubFindAnimated;
+			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
+			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
+
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast);
+
+			try
+			{
+				TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
+				Assert.Fail("Ожидался выброс исключения ApplicationException так как селектор pageSelectorForAnyPages вернул null (чего быть в работе не должно никогда)");
+			}
+			catch (System.AggregateException aggrEx)
+			{
+				ApplicationException appEx = (ApplicationException)aggrEx.InnerExceptions[0];
+
+				//это и должно было произойти. В тексте наш спец.текст
+				Assert.IsTrue(appEx.Message.Contains("No page found for twitting"));
+			}
+
+		}
+
+
 
 	}
 }
