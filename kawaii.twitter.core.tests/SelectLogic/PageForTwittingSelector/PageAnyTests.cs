@@ -165,6 +165,82 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 		}
 
 
+		[TestMethod]
+		[Description("Страница найдена, и найдены аним.изображения, но рандомизатор сообщил не использовать их")]
+		[TestCategory("PageForTwittingSelector")]
+		public void PageFound_And_AnimatedFound_Random_Select_PageOnly()
+		{
+			//Тест-кейс: найдена не-новая страница и у нее есть внешние изображения. Рандомизированный выбор "решил" что их не нужно использовать
+			SitePage page = new SitePage
+			{
+				URL = "https://dummy/url"
+			};
+
+			//pageSelectorForNewPages в данном тесте выдает null чтобы логика прошла дальше (нет новых страниц)
+			var stubNewPages = new Stubs.PageSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = null
+			};
+
+			//этот стаб вернет null (нет новых аним.изображений)
+			var animNewStub = new Stubs.AnimatedSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = null
+			};
+
+
+			IPageSelector pageSelectorForNewPages = stubNewPages;
+			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+
+			IFindPageByBlobName findPageByBlobName = new Stubs.FindPageByBlobNameStub();
+
+			var stubAnyPages = new Stubs.PageSelectorStub
+			{
+				DontThrowNotImpl = true,
+				Result = page
+			};
+			//Главный "герой" этого теста - должен вернуть одну страницу (ее когда-то твитили, но уже давно)
+			IPageSelector pageSelectorForAnyPages = stubAnyPages;
+
+			//аним.изображения найдены, но их не будем использовать
+			AnimatedImage[] animatedImgs = new AnimatedImage[]
+			{
+				//здесь нам не важно что - оно просто должно быть, тест "не выбирает" это
+				new AnimatedImage() { BlobName="dummy", TweetDate=new DateTime(2020,04,26,00,00,00) }
+			};
+
+			var stubFindAnimated = new Stubs.FindAnimatedByPageStub
+			{
+				DontThrowNotImpl = true,
+				Result = animatedImgs
+			};
+
+			IFindAnimatedByPage findAnimatedByPage = stubFindAnimated;
+
+			//этот стаб имитирует "случайное решение" о том использовать ли изобр.со страницы , или внешнее анимированное.
+			//В этом тесте он всегда выбирает "со страницы"
+			var stubRandomPageOrImg = new Stubs.PageOrExternalImageSelectorStub();
+			stubRandomPageOrImg.DontThrowNotImpl = true;
+			stubRandomPageOrImg.UseExternalAnimatedImage = false;	//именно это важно для данного теста
+
+			IPageOrExternalImageSelector pageOrExternalImageSelector = stubRandomPageOrImg;
+
+			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
+
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast);
+
+			TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
+
+			//проверяем что он вернул
+			Assert.IsNotNull(result);
+			Assert.IsNotNull(result.Page);
+			Assert.IsNull(result.Image, "Не очікувалося заповнення TwittData.Image");
+
+			Assert.AreSame(page, result.Page);
+		}
+
 
 	}
 }
