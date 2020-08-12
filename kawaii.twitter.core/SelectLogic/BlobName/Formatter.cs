@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kawaii.twitter.core.SelectLogic.BlobName
 {
-	public class Formatter
+	public class Formatter: IFormatter
 	{
 		public Formatter()
 		{
