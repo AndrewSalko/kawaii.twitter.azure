@@ -26,10 +26,12 @@ namespace kawaii.twitter.core.SelectLogic.Images.ExcludeUsed
 
 			Random rnd = new Random(Environment.TickCount);
 
-			//особенность рандома - последний элемент не входит
-			int ind = rnd.Next(images.Length - 1);
+			//особенность рандома - последний элемент не входит. Если у нас в массиве 5 элементов, то выборка будет для первых 4-х, последний не берем
+			int max = images.Length - 1;
 
-			return images[ind];
+			int ind = rnd.Next(max);
+
+			return sorted[ind];
 		}
 
 	}

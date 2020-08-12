@@ -35,5 +35,16 @@ namespace kawaii.twitter.db
 			set;
 		}
 
+		public override string ToString()
+		{
+			if (TweetDate == null)
+			{
+				return BlobName;
+			}
+
+			string dispName = string.Format("{0} {1:yyyy_MM_dd__HH_mm_ss}", BlobName, TweetDate);
+			return dispName;
+		}
+
 	}
 }
