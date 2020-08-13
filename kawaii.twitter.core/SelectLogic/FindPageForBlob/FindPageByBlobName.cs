@@ -10,25 +10,22 @@ namespace kawaii.twitter.core.SelectLogic.FindPageForBlob
 {
 	class FindPageByBlobName: IFindPageByBlobName
 	{
-		IMongoCollection<SitePage> _Pages;
+		IMongoQueryable<SitePage> _Pages;
+		IBlobNameToURLPart _BlobNameToURLPart;
 
-		public FindPageByBlobName(IMongoCollection<SitePage> pages)
+		//IMongoCollection<SitePage> pages - old way
+
+		public FindPageByBlobName(IMongoQueryable<SitePage> pages, IBlobNameToURLPart blobNameToURLPart)
 		{
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
+			_BlobNameToURLPart = blobNameToURLPart ?? throw new ArgumentNullException(nameof(blobNameToURLPart));
 		}
 
 		public async Task<SitePage> Find(string blobName)
 		{
-			//формат blobName виглядає як "slug поста:ім'я файлу"
-			//Ми зможемо знайти такий пост через url
+			string slug = _BlobNameToURLPart.GetURLPart(blobName);
 
-			string[] parts = blobName.Split(':');
-			if (parts.Length != 2)
-				throw new ArgumentException("blobName має невірний формат", nameof(blobName));
-
-			string slug = string.Format("/{0}", parts[0]);
-
-			SitePage result = await (from page in _Pages.AsQueryable() where (page.URL.EndsWith(slug)) select page).FirstOrDefaultAsync();
+			SitePage result = await (from page in _Pages where (page.URL.EndsWith(slug)) select page).FirstOrDefaultAsync();
 			return result;
 		}
 

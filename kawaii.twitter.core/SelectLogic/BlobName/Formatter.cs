@@ -17,6 +17,9 @@ namespace kawaii.twitter.core.SelectLogic.BlobName
 		/// <returns></returns>
 		public string GetBlobNamePrefix(string postFolderName)
 		{
+			if (string.IsNullOrEmpty(postFolderName))
+				throw new ArgumentNullException(nameof(postFolderName));
+
 			string blobPrefix = string.Format("{0}:", postFolderName);
 			return blobPrefix;
 		}
