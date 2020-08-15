@@ -114,9 +114,14 @@ namespace kawaii.twitter.console
 			string postSiteMapURL = "https://kawaii-mobile.com/post.xml";
 
 			//string mongoConnectionString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
+			//kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(azureDBConnectionString, true);
 
-			kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(azureDBConnectionString, true);
-			kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(database);
+			kawaii.twitter.db.SitePageCollection sitePageCollection = new db.SitePageCollection();
+			sitePageCollection.Initialize(azureDBConnectionString, true, null, null);
+
+			var sitePages = sitePageCollection.SitePages;
+
+			kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(sitePages);
 
 			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(_HttpClient);
 

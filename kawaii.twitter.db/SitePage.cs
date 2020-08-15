@@ -8,6 +8,12 @@ namespace kawaii.twitter.db
 	/// </summary>
 	public class SitePage
 	{
+		[BsonId]
+		public MongoDB.Bson.ObjectId Id
+		{
+			get;
+			set;
+		}
 
 		[BsonIgnoreIfNull]
 		public string URL
@@ -20,6 +26,7 @@ namespace kawaii.twitter.db
 		/// Дата модификации страницы (по карте сайта)
 		/// </summary>
 		[BsonIgnoreIfNull]
+		[BsonDateTimeOptions(Kind = DateTimeKind.Local)]
 		public DateTime? LastModified
 		{
 			get;
@@ -40,6 +47,7 @@ namespace kawaii.twitter.db
 		/// Дата, когда мы твитили последний раз эту страницу
 		/// </summary>
 		[BsonIgnoreIfNull]
+		[BsonDateTimeOptions(Kind = DateTimeKind.Local)]
 		public DateTime? TweetDate
 		{
 			get;

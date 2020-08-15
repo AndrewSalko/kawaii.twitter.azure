@@ -13,7 +13,7 @@ using MongoDB.Driver.Linq;
 namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 {
 	/// <summary>
-	/// Не удалось заставить это работать... лист это не то что "живая монго"
+	/// Этот стаб годится только для минимальных проверок на null, работать он не может
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	class QueryableStub<T>: IMongoQueryable<T>

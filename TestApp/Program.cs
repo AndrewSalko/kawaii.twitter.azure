@@ -18,8 +18,13 @@ namespace TestApp
 
 				string mongoConnectionString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
 
-				kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(mongoConnectionString, false);
-				kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(database);
+				//kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(mongoConnectionString, false);
+
+				kawaii.twitter.db.SitePageCollection sitePageCollection = new kawaii.twitter.db.SitePageCollection();
+				sitePageCollection.Initialize(mongoConnectionString, false, null, null);
+				var sitePages = sitePageCollection.SitePages;
+
+				kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(sitePages);
 
 				kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(httpClient);
 

@@ -16,16 +16,13 @@ namespace kawaii.twitter.core.SelectLogic.Images.Find
 	/// </summary>
 	public class FindAnimatedByPage
 	{
-		IMongoCollection<AnimatedImage> _AnimatedImages;
+		IMongoQueryable<AnimatedImage> _AnimatedImages;
 		IFolderFromURL _FolderFromURL;
 		BlobName.IFormatter _Formatter;
 
-		public FindAnimatedByPage(IMongoCollection<AnimatedImage> animatedImages, int topQueryCount, IFolderFromURL folderFromURL, BlobName.IFormatter formatter)
+		public FindAnimatedByPage(IMongoQueryable<AnimatedImage> animatedImages, IFolderFromURL folderFromURL, BlobName.IFormatter formatter)
 		{
 			_AnimatedImages = animatedImages ?? throw new ArgumentNullException(nameof(animatedImages));
-
-			if (topQueryCount <= 0)
-				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));
 
 			_FolderFromURL = folderFromURL ?? throw new ArgumentNullException(nameof(folderFromURL));
 			_Formatter = formatter ?? throw new ArgumentNullException(nameof(formatter));
@@ -39,13 +36,10 @@ namespace kawaii.twitter.core.SelectLogic.Images.Find
 			//получаем префикс блоба, и по нему будем искать уже выборку
 			string blobPrefix = _Formatter.GetBlobNamePrefix(postFolder);
 
-			var gifsForPage = await (from gif in _AnimatedImages.AsQueryable() where (gif.BlobName.StartsWith(blobPrefix)) select gif).ToListAsync();
-			if (gifsForPage != null)
-			{
-				return gifsForPage.ToArray();
-			}
+			var gifsForPage = await (from gif in _AnimatedImages where (gif.BlobName.StartsWith(blobPrefix)) select gif).ToListAsync();
 
-			return null;
+			//вроде как никогда null не может вернуть
+			return gifsForPage.ToArray();
 		}
 
 

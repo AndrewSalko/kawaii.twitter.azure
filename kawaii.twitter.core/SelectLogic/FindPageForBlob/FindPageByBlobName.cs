@@ -13,8 +13,6 @@ namespace kawaii.twitter.core.SelectLogic.FindPageForBlob
 		IMongoQueryable<SitePage> _Pages;
 		IBlobNameToURLPart _BlobNameToURLPart;
 
-		//IMongoCollection<SitePage> pages - old way
-
 		public FindPageByBlobName(IMongoQueryable<SitePage> pages, IBlobNameToURLPart blobNameToURLPart)
 		{
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));

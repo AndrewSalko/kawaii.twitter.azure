@@ -13,6 +13,13 @@ namespace kawaii.twitter.db
 	/// </summary>
 	public class AnimatedImage
 	{
+		[BsonId]
+		public MongoDB.Bson.ObjectId Id
+		{
+			get;
+			set;
+		}
+
 		/// <summary>
 		/// Имя блоб-данных (где оно хранится). Формат: "slug:fileName"
 		/// Например для поста https://kawaii-mobile.com/2012/10/accel-world/
@@ -29,6 +36,7 @@ namespace kawaii.twitter.db
 		/// Дата, когда мы твитили это изображение
 		/// </summary>
 		[BsonIgnoreIfNull]
+		[BsonDateTimeOptions(Kind = DateTimeKind.Local)]
 		public DateTime? TweetDate
 		{
 			get;

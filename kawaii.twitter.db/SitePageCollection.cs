@@ -13,18 +13,20 @@ namespace kawaii.twitter.db
 		/// </summary>
 		public const string COLLECTION_SITE_PAGES = "SitePages";
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="connectionString"></param>
+		/// <param name="useSSL"></param>
+		/// <param name="dataBaseName">База данных. Если передать null, будет использована константа</param>
+		/// <param name="collectionName">Имя коллекции. Если передать null, будет использована константа COLLECTION_SITE_PAGES</param>
+		/// <returns></returns>
 		public IMongoCollection<SitePage> Initialize(string connectionString, bool useSSL, string dataBaseName, string collectionName)
 		{
-			if (string.IsNullOrEmpty(connectionString))
-				throw new ArgumentNullException(nameof(connectionString));
-
-			if (string.IsNullOrEmpty(dataBaseName))
-				throw new ArgumentNullException(nameof(dataBaseName));
+			var db = _Initialize(connectionString, useSSL, dataBaseName);
 
 			if (string.IsNullOrEmpty(collectionName))
-				throw new ArgumentNullException(nameof(collectionName));
-
-			var db = _InitializeDB(connectionString, useSSL, dataBaseName);
+				collectionName = COLLECTION_SITE_PAGES;
 
 			SitePages = db.GetCollection<SitePage>(collectionName);
 

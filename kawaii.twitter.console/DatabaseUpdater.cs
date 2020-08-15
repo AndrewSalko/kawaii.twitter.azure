@@ -46,8 +46,10 @@ namespace kawaii.twitter.console
 
 			Console.WriteLine("Found {0} animated blobs", blobNames.Length);
 
-			Database db = new db.Database(_AzureSiteDBConnectionString, true);
-			var imagesCollection = db.AnimatedImages;
+			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection();
+			animatedImageCollection.Initialize(_AzureSiteDBConnectionString, true, null, null);
+
+			var imagesCollection = animatedImageCollection.AnimatedImages;
 
 			foreach (var blobName in blobNames)
 			{

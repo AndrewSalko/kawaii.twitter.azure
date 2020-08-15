@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.core.SiteMap;
 using kawaii.twitter.db;
+using MongoDB.Driver;
 
 namespace kawaii.twitter.core
 {
@@ -13,11 +14,11 @@ namespace kawaii.twitter.core
 	/// </summary>
 	public class DatabaseFromSitemapUpdater
 	{
-		Database _Database;
+		IMongoCollection<SitePage> _SitePages;
 
-		public DatabaseFromSitemapUpdater(Database database)
+		public DatabaseFromSitemapUpdater(IMongoCollection<SitePage> sitePages)
 		{
-			_Database = database ?? throw new ArgumentNullException(nameof(database));
+			_SitePages = sitePages ?? throw new ArgumentNullException(nameof(sitePages));
 		}
 
 		public async Task UpdateFromSitemap(string postSiteMapURL, XMLSiteMapLoader siteMapLoader)
@@ -29,7 +30,6 @@ namespace kawaii.twitter.core
 				throw new ApplicationException("urls null or empty");
 
 			//по каждому урлу надо уточнить, есть ли он в базе, если нет - добавляем
-			var sitePagesDB = _Database.SitePages;
 
 			foreach (var urlInfo in urls)
 			{
@@ -41,7 +41,7 @@ namespace kawaii.twitter.core
 					SpecialDay = SpecialDays.DetectSpecialDay(urlInfo.URL)
 				};
 
-				await sitePagesDB.InsertOneAsync(sitePage);
+				await _SitePages.InsertOneAsync(sitePage);
 			}//foreach
 
 		}

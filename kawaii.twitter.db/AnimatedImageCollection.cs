@@ -14,16 +14,10 @@ namespace kawaii.twitter.db
 
 		public IMongoCollection<AnimatedImage> Initialize(string connectionString, bool useSSL, string dataBaseName, string collectionName)
 		{
-			if (string.IsNullOrEmpty(connectionString))
-				throw new ArgumentNullException(nameof(connectionString));
-
-			if (string.IsNullOrEmpty(dataBaseName))
-				throw new ArgumentNullException(nameof(dataBaseName));
+			var db = _Initialize(connectionString, useSSL, dataBaseName);
 
 			if (string.IsNullOrEmpty(collectionName))
-				throw new ArgumentNullException(nameof(collectionName));
-
-			var db = _InitializeDB(connectionString, useSSL, dataBaseName);
+				collectionName = COLLECTION_ANIMATED_IMAGES;
 
 			AnimatedImages = db.GetCollection<AnimatedImage>(collectionName);
 

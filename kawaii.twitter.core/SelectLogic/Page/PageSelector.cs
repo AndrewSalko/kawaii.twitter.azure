@@ -17,11 +17,8 @@ namespace kawaii.twitter.core.SelectLogic.Page
 		IMongoCollection<SitePage> _Pages;
 		IRandomSelector _RandomSelector;
 
-		public PageSelector(IMongoCollection<SitePage> pages, int topQueryCount, IRandomSelector randomSelector)
+		public PageSelector(IMongoCollection<SitePage> pages, IRandomSelector randomSelector)
 		{
-			if (topQueryCount <= 0)
-				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));
-
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
 			_RandomSelector = randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
 		}
