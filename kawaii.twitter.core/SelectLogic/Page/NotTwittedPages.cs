@@ -19,14 +19,15 @@ namespace kawaii.twitter.core.SelectLogic.Page
 		int _TopQueryCount;
 		IRandomSelector _RandomSelector;
 
-		public NotTwittedPages(IMongoCollection<SitePage> pages, int topQueryCount, IRandomSelector randomSelector)
+		public NotTwittedPages(IMongoCollection<SitePage> pages, IRandomSelector randomSelector, int topQueryCount)
 		{
+			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
+			_RandomSelector=randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
+
 			if (topQueryCount <= 0)
 				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));
 
-			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
 			_TopQueryCount = topQueryCount;
-			_RandomSelector=randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
 		}
 
 		public async Task<SitePage> GetPageForTwitting()
