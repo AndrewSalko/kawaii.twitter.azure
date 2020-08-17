@@ -7,7 +7,7 @@ using kawaii.twitter.db;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace kawaii.twitter.core.SelectLogic.Images
+namespace kawaii.twitter.core.SelectLogic.Images.Newly
 {
 	public class NotTwittedAnimated : IAnimatedSelector
 	{
@@ -15,14 +15,15 @@ namespace kawaii.twitter.core.SelectLogic.Images
 		int _TopQueryCount;
 		IRandomSelector _RandomSelector;
 
-		public NotTwittedAnimated(IMongoCollection<AnimatedImage> animatedImages, int topQueryCount, IRandomSelector randomSelector)
+		public NotTwittedAnimated(IMongoCollection<AnimatedImage> animatedImages, IRandomSelector randomSelector, int topQueryCount)
 		{
+			_AnimatedImages = animatedImages ?? throw new ArgumentNullException(nameof(animatedImages));
+			_RandomSelector = randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
+
 			if (topQueryCount <= 0)
 				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));
 
-			_AnimatedImages = animatedImages ?? throw new ArgumentNullException(nameof(animatedImages));
 			_TopQueryCount = topQueryCount;
-			_RandomSelector = randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
 		}
 
 
