@@ -139,6 +139,27 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 			return pages;
 		}
 
+		[TestMethod]
+		[Description("Тест нормальной работы получения новых пустой результат")]
+		[TestCategory("NotTwittedAnimated")]
+		public void NotTwittedAnimated_Find_Empty_Result()
+		{
+			var anim = _PrepareAnimatedCollection(true, false);	//будет пустая коллекция
+
+			//Здесь нам нужен особенный (не рандомный) селектор, который будет давать те индексы которые нужно для граничных условий
+			var rndStub = new RandomSelectorStub
+			{
+				Result = 0
+			};
+
+			var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT);
+
+			//случайный селектор работает по 3 блобам
+			var resultImg = notTwittedAnimated.GetAnimatedImageForTwitting().Result;
+
+			Assert.IsNull(resultImg, "Результат повинен бути null");
+		}
+
 
 		[TestMethod]
 		[Description("Тест нормальной работы получения новых страниц, которые ни разу не твитили")]

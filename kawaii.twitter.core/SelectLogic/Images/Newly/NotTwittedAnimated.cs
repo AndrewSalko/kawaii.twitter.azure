@@ -30,16 +30,14 @@ namespace kawaii.twitter.core.SelectLogic.Images.Newly
 		public async Task<AnimatedImage> GetAnimatedImageForTwitting()
 		{
 			var gifsNotTwitted = (from gif in _AnimatedImages.AsQueryable() where (gif.TweetDate == null) select gif).Take(_TopQueryCount);
-			if (gifsNotTwitted != null)
-			{
-				var list = await gifsNotTwitted.ToListAsync();
+			
+			var list = await gifsNotTwitted.ToListAsync();
 
-				if (list.Count > 0)
-				{
-					int ind = _RandomSelector.GetRandomIndex(list.Count);
-					AnimatedImage img = list[ind];
-					return img;
-				}
+			if (list.Count > 0)
+			{
+				int ind = _RandomSelector.GetRandomIndex(list.Count);
+				AnimatedImage img = list[ind];
+				return img;
 			}
 
 			return null;
