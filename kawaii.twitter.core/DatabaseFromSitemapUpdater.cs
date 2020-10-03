@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using kawaii.twitter.Logs;
 using kawaii.twitter.core.SiteMap;
 using kawaii.twitter.db;
 using MongoDB.Driver;
@@ -21,7 +22,7 @@ namespace kawaii.twitter.core
 			_SitePages = sitePages ?? throw new ArgumentNullException(nameof(sitePages));
 		}
 
-		public async Task UpdateFromSitemap(string postSiteMapURL, XMLSiteMapLoader siteMapLoader)
+		public async Task UpdateFromSitemap(string postSiteMapURL, XMLSiteMapLoader siteMapLoader, ILogger log)
 		{
 			//Здесь мы не даем лимиты, по идее каждый раз сканировать всю карту сайта не нужно, а лишь последние 10 постов
 
@@ -29,21 +30,38 @@ namespace kawaii.twitter.core
 			if (urls == null || urls.Length == 0)
 				throw new ApplicationException("urls null or empty");
 
+			log.Log("Found {0} urls from sitemap...", urls.Length);
+
 			//по каждому урлу надо уточнить, есть ли он в базе, если нет - добавляем
+			int added = 0;
 
 			foreach (var urlInfo in urls)
 			{
+				//поиск по URL - это достаточно надежный "ключ" уникальности записи
+				string url = urlInfo.URL;
+
+				var findResult = await _SitePages.FindAsync(x => x.URL == url);
+				var foundRecord = findResult.FirstOrDefault();
+				if (foundRecord != null)
+					continue;
+
 				SitePage sitePage = new SitePage
 				{
 					LastModified = urlInfo.LastModified,
 					Title = urlInfo.Title,
-					URL = urlInfo.URL,
-					SpecialDay = SpecialDays.DetectSpecialDay(urlInfo.URL)
+					URL = url,
+					SpecialDay = SpecialDays.DetectSpecialDay(url)
 				};
 
 				await _SitePages.InsertOneAsync(sitePage);
+
+				added++;
+
+				log.Log("Added new url: {0}", url);
+
 			}//foreach
 
+			log.Log("Done updating from sitemap, added {0}", added);
 		}
 
 	}

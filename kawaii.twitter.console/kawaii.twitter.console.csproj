@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,6 +9,7 @@
     <ProjectReference Include="..\kawaii.twitter.blob\kawaii.twitter.blob.csproj" />
     <ProjectReference Include="..\kawaii.twitter.core\kawaii.twitter.core.csproj" />
     <ProjectReference Include="..\kawaii.twitter.db\kawaii.twitter.db.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.interfaces\kawaii.twitter.interfaces.csproj" />
   </ItemGroup>
 
 </Project>

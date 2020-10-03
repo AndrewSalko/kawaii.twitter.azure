@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using kawaii.twitter.blob;
 using kawaii.twitter.db;
 using MongoDB.Driver;
+using kawaii.twitter.Logs;
 
 namespace kawaii.twitter.console
 {
@@ -14,8 +15,9 @@ namespace kawaii.twitter.console
 	{
 		string _AzureBlobConnectionString;
 		string _AzureSiteDBConnectionString;
+		ILogger _Log;
 
-		public DatabaseUpdater(string azureBlobConnectionString, string azureSiteDBConnectionString)
+		public DatabaseUpdater(string azureBlobConnectionString, string azureSiteDBConnectionString, ILogger log)
 		{
 			if (string.IsNullOrEmpty(azureBlobConnectionString))
 				throw new ArgumentNullException(nameof(azureBlobConnectionString));
@@ -25,6 +27,7 @@ namespace kawaii.twitter.console
 
 			_AzureBlobConnectionString = azureBlobConnectionString;
 			_AzureSiteDBConnectionString = azureSiteDBConnectionString;
+			_Log = log ?? throw new ArgumentNullException(nameof(log));
 		}
 
 
@@ -33,23 +36,25 @@ namespace kawaii.twitter.console
 		/// </summary>
 		public async Task UpdateAnimatedBlobDataBase()
 		{
-			Console.WriteLine("UpdateAnimatedBlobDataBase started...");
+			_Log.Log("UpdateAnimatedBlobDataBase started...");
 
 			var animatedImagesBlobContainer = new AnimatedImagesBlobContainer(_AzureBlobConnectionString);
 			string[] blobNames = animatedImagesBlobContainer.GetBlobNames();
 
 			if (blobNames == null || blobNames.Length == 0)
 			{
-				Console.WriteLine("Blobs not found");
+				_Log.Log("Blobs not found");
 				return;
 			}
 
-			Console.WriteLine("Found {0} animated blobs", blobNames.Length);
+			_Log.Log("Found {0} animated blobs", blobNames.Length);
 
 			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection();
 			animatedImageCollection.Initialize(_AzureSiteDBConnectionString, true, null, null);
 
 			var imagesCollection = animatedImageCollection.AnimatedImages;
+
+			int added = 0;
 
 			foreach (var blobName in blobNames)
 			{
@@ -80,11 +85,14 @@ namespace kawaii.twitter.console
 					};
 
 					await imagesCollection.InsertOneAsync(animatedImage);
+
+					added++;
+
+					_Log.Log("Added: {0}", blobName);
 				}
 			}
 
-
-			Console.WriteLine("UpdateAnimatedBlobDataBase finished");
+			_Log.Log("UpdateAnimatedBlobDataBase finished, added: {0}", added);
 		}
 	}
 }

@@ -30,6 +30,25 @@ namespace kawaii.twitter.db
 
 			SitePages = db.GetCollection<SitePage>(collectionName);
 
+			//готовим индексы для необходимых полей
+			var keysBlocked = Builders<SitePage>.IndexKeys.Ascending(x => x.Blocked);
+			var modelBlocked = new CreateIndexModel<SitePage>(keysBlocked);
+			
+			var keysLastModified = Builders<SitePage>.IndexKeys.Ascending(x => x.LastModified);
+			var modelLastModified = new CreateIndexModel<SitePage>(keysLastModified);
+
+			var keysSpecialDay = Builders<SitePage>.IndexKeys.Ascending(x => x.SpecialDay);
+			var modelSpecialDay = new CreateIndexModel<SitePage>(keysSpecialDay);
+
+			var keysTweetDate = Builders<SitePage>.IndexKeys.Ascending(x => x.TweetDate);
+			var modelTweetDate = new CreateIndexModel<SitePage>(keysSpecialDay);
+
+			var keysURL = Builders<SitePage>.IndexKeys.Ascending(x => x.URL);
+			var modelURL = new CreateIndexModel<SitePage>(keysURL);
+
+			CreateIndexModel<SitePage>[] indexModels = { modelBlocked, modelLastModified, modelSpecialDay, modelTweetDate, modelURL };
+			SitePages.Indexes.CreateMany(indexModels);
+
 			return SitePages;
 		}
 

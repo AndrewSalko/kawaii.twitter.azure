@@ -5,8 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Logs\**" />
+    <EmbeddedResource Remove="Logs\**" />
+    <None Remove="Logs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\kawaii.twitter.blob\kawaii.twitter.blob.csproj" />
     <ProjectReference Include="..\kawaii.twitter.db\kawaii.twitter.db.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.interfaces\kawaii.twitter.interfaces.csproj" />
   </ItemGroup>
 
   <ItemGroup>

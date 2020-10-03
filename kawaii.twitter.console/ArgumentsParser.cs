@@ -120,8 +120,14 @@ namespace kawaii.twitter.console
 		{
 			get
 			{
-				_Arguments.TryGetValue(ArgumentTypes.AnimatedBlobsConnectionString, out string blobConnectionString);
-				return blobConnectionString;
+				string result = string.Empty;
+
+				if (_Arguments.TryGetValue(ArgumentTypes.AnimatedBlobsConnectionString, out string connectionString) && !string.IsNullOrEmpty(connectionString))
+				{
+					result = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment(connectionString);
+				}
+
+				return result;
 			}
 		}
 
@@ -132,8 +138,14 @@ namespace kawaii.twitter.console
 		{
 			get
 			{
-				_Arguments.TryGetValue(ArgumentTypes.SitePagesConnectionString, out string connectionString);
-				return connectionString;
+				string result = string.Empty;
+
+				if (_Arguments.TryGetValue(ArgumentTypes.SitePagesConnectionString, out string connectionString) && !string.IsNullOrEmpty(connectionString))
+				{
+					result = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment(connectionString);
+				}
+
+				return result;
 			}
 		}
 	}

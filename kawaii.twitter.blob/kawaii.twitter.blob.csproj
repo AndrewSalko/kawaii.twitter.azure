@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.Azure.Storage.Common" Version="11.1.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\kawaii.twitter.interfaces\kawaii.twitter.interfaces.csproj" />
+  </ItemGroup>
+
 </Project>

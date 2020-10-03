@@ -21,6 +21,16 @@ namespace kawaii.twitter.db
 
 			AnimatedImages = db.GetCollection<AnimatedImage>(collectionName);
 
+			//применим индекс (имя блоба)
+			var keysBlobName = Builders<AnimatedImage>.IndexKeys.Ascending(x => x.BlobName);
+			var modelBlobName = new CreateIndexModel<AnimatedImage>(keysBlobName);
+
+			var keysTweetDate = Builders<AnimatedImage>.IndexKeys.Ascending(x => x.TweetDate);
+			var modelTweetDate = new CreateIndexModel<AnimatedImage>(keysTweetDate);
+
+			CreateIndexModel<AnimatedImage>[] indexModels = { modelBlobName, modelTweetDate };
+			AnimatedImages.Indexes.CreateMany(indexModels);
+
 			return AnimatedImages;
 		}
 

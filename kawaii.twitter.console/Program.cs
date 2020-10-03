@@ -81,39 +81,7 @@ namespace kawaii.twitter.console
 						return;
 					}
 
-					var animatedImagesBlobContainer = new AnimatedImagesBlobContainer(azureBlobConnectionString);
-
-					var files = Directory.EnumerateFiles(sourceFolder, _GIF_FILES_MASK, SearchOption.AllDirectories);
-
-					int count = 0;
-					int counterForLog = 0;
-					foreach (var fileName in files)
-					{
-						int t2 = Environment.TickCount;
-						string blobName = animatedImagesBlobContainer.UploadImage(fileName, out bool upladedNewImage);
-						t2 = Environment.TickCount - t2;
-
-						if (upladedNewImage)
-						{
-							Console.WriteLine("{0} - uploaded to blob: {1} ({2} ms)", fileName, blobName, t2);
-						}
-
-						count++;
-						counterForLog++;
-						if (counterForLog >= 25)
-						{
-							Console.WriteLine("Processed {0} files...", count);
-							counterForLog = 0;
-						}
-
-					}//foreach
-
-					Console.WriteLine("Processed {0} files", count);
-
-					//виконати до-вантаження (або створити) базу анімованих зображень з наявних блоб-об'єктів
-
-					DatabaseUpdater upd = new DatabaseUpdater(azureBlobConnectionString, azureDBSitePagesConnectionString);
-					await upd.UpdateAnimatedBlobDataBase();
+					await _UpdateGifFromDisk(azureBlobConnectionString, azureDBSitePagesConnectionString, sourceFolder);
 				}
 				else
 				{
@@ -164,9 +132,6 @@ namespace kawaii.twitter.console
 		/// <returns></returns>
 		static async Task _UpdateDBFromSitemap(string azureDBConnectionString, int limitUpdateCount)
 		{
-			//string mongoConnectionString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
-			//kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(azureDBConnectionString, true);
-
 			kawaii.twitter.db.SitePageCollection sitePageCollection = new db.SitePageCollection();
 			sitePageCollection.Initialize(azureDBConnectionString, true, null, null);
 
@@ -174,11 +139,67 @@ namespace kawaii.twitter.console
 
 			kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(sitePages);
 
-			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(_HttpClient);
-			//якщо потрібно оновити лише "найновіші пости", наприклад 10 останніх - передати більше 0. Якщо 0 - то оновити усі
-			loader.LimitCount = limitUpdateCount;
+			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(_HttpClient)
+			{
+				//якщо потрібно оновити лише "найновіші пости", наприклад 10 останніх - передати більше 0. Якщо 0 - то оновити усі
+				LimitCount = limitUpdateCount
+			};
 
-			await databaseFromSitemapUpdater.UpdateFromSitemap(_SITEMAP_POSTS_URL, loader);
+			ConsoleLogger logger = new ConsoleLogger();
+
+			await databaseFromSitemapUpdater.UpdateFromSitemap(_SITEMAP_POSTS_URL, loader, logger);
+		}
+
+		/// <summary>
+		/// Оновлює базу блобів та таблицу (mongodb). Файли .gif шукаються у локальній папці, якщо потрібно - завантажуються до хмарного сховища
+		/// </summary>
+		/// <param name="azureBlobConnectionString"></param>
+		/// <param name="azureDBSitePagesConnectionString"></param>
+		/// <param name="sourceFolder"></param>
+		/// <returns></returns>
+		static async Task _UpdateGifFromDisk(string azureBlobConnectionString, string azureDBSitePagesConnectionString, string sourceFolder)
+		{
+			ConsoleLogger logger = new ConsoleLogger();
+
+			//конейнер блобів - відповідає лише за збереження бінар.файлів за спец.іменуванням
+			var animatedImagesBlobContainer = new AnimatedImagesBlobContainer(azureBlobConnectionString);
+
+			//пошук усіх варіантів gif-файлів на диску...
+			var files = Directory.EnumerateFiles(sourceFolder, _GIF_FILES_MASK, SearchOption.AllDirectories);
+
+			int count = 0;
+			int counterForLog = 0;
+			int added = 0;
+			foreach (var fileName in files)
+			{
+				int t2 = Environment.TickCount;
+				//UploadImage перевіряє, якщо такий файл є, нічого не робить
+				string blobName = animatedImagesBlobContainer.UploadImage(fileName, out bool upladedNewImage);
+				t2 = Environment.TickCount - t2;
+
+				if (upladedNewImage)
+				{
+					logger.Log("{0} - uploaded to blob: {1} ({2} ms)", fileName, blobName, t2);
+					added++;
+				}
+
+				count++;
+				counterForLog++;
+				if (counterForLog >= 25)
+				{
+					logger.Log("Processed {0} files...", count);
+					counterForLog = 0;
+				}
+
+			}//foreach
+
+			logger.Log("Processed {0} files, new uploaded to azure: {1}", count, added);
+
+			//Тепер необхідно "актуалізувати" базу у mongodb - виконати до-вантаження (або створити) базу анімованих зображень з наявних блоб-об'єктів
+			//TODO@: тут немає варіанту якщо блоб було "видалено", подумати про це
+
+			DatabaseUpdater upd = new DatabaseUpdater(azureBlobConnectionString, azureDBSitePagesConnectionString, logger);
+			await upd.UpdateAnimatedBlobDataBase();
 		}
 
 	}

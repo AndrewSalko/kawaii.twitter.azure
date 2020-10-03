@@ -12,24 +12,25 @@ namespace TestApp
 
 			try
 			{
-				string postSiteMapURL = "https://kawaii-mobile.com/post.xml";
+				await Task.Delay(1);
 
-				HttpClient httpClient = new HttpClient();
+				//string postSiteMapURL = "https://kawaii-mobile.com/post.xml";
 
-				string mongoConnectionString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
+				//HttpClient httpClient = new HttpClient();
 
-				//kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(mongoConnectionString, false);
+				//string mongoConnectionString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
 
-				kawaii.twitter.db.SitePageCollection sitePageCollection = new kawaii.twitter.db.SitePageCollection();
-				sitePageCollection.Initialize(mongoConnectionString, false, null, null);
-				var sitePages = sitePageCollection.SitePages;
+				////kawaii.twitter.db.Database database = new kawaii.twitter.db.Database(mongoConnectionString, false);
 
-				kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(sitePages);
+				//kawaii.twitter.db.SitePageCollection sitePageCollection = new kawaii.twitter.db.SitePageCollection();
+				//sitePageCollection.Initialize(mongoConnectionString, false, null, null);
+				//var sitePages = sitePageCollection.SitePages;
 
-				kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(httpClient);
+				//kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(sitePages);
 
-				await databaseFromSitemapUpdater.UpdateFromSitemap(postSiteMapURL, loader);
+				//kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(httpClient);
 
+				//await databaseFromSitemapUpdater.UpdateFromSitemap(postSiteMapURL, loader,);
 			}
 			catch (Exception ex)
 			{
