@@ -39,7 +39,5 @@ namespace kawaii.twitter.db
 			get;
 			private set;
 		}
-
-
 	}
 }

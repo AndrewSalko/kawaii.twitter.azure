@@ -46,8 +46,8 @@ namespace TestApp
 
 			string url = "https://kawaii-mobile.com/2020/07/gleipnir/";
 
-			var twitterImageURL = new kawaii.twitter.core.HtmlParsers.TwitterImageURL();
-			string imageURL = await twitterImageURL.GetTwitterImageFileURL(httpClient, url);
+			var twitterImageURL = new kawaii.twitter.core.HtmlParsers.TwitterImageURL(httpClient);
+			string imageURL = await twitterImageURL.GetTwitterImageFileURL(url);
 
 			Console.WriteLine(imageURL);
 		}

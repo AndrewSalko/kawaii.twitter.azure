@@ -15,18 +15,20 @@ namespace kawaii.twitter.core.SiteMap
 	/// </summary>
 	public class XMLSiteMapLoader
 	{
-		HttpClient _HttpClient;
+		ISiteMapWebDownloader _SiteMapWebDownloader;
+		IPostBodyLoader _PostBodyLoader;
 
-		public XMLSiteMapLoader(HttpClient httpClient)
+		public XMLSiteMapLoader(ISiteMapWebDownloader siteMapWebDownloader, IPostBodyLoader postBodyLoader)
 		{
-			_HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+			_SiteMapWebDownloader = siteMapWebDownloader ?? throw new ArgumentNullException(nameof(siteMapWebDownloader));
+			_PostBodyLoader = postBodyLoader ?? throw new ArgumentNullException(nameof(postBodyLoader));
 		}
 
 		public async Task<URLInfo[]> Load(string xmlSiteMapURL)
 		{
 			List<URLInfo> result=new List<URLInfo>();
 
-			string xmlBody = await _HttpClient.GetStringAsync(xmlSiteMapURL);
+			string xmlBody = await _SiteMapWebDownloader.DownloadSiteMapBody(xmlSiteMapURL);
 
 			var xmlDoc = new XmlDocument();
 			xmlDoc.LoadXml(xmlBody);
@@ -99,7 +101,7 @@ namespace kawaii.twitter.core.SiteMap
 			string result = null;
 			try
 			{
-				string htmlBody = await _HttpClient.GetStringAsync(url);
+				string htmlBody = await _PostBodyLoader.GetHtmlBodyForURL(url);
 
 				Match m = Regex.Match(htmlBody, @"<title>(.*?)</title>");
 				if (m.Success)

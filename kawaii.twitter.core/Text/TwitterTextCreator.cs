@@ -7,7 +7,7 @@ namespace kawaii.twitter.core.Text
 	/// <summary>
 	/// Генерує повний текст для твіта (с URL та тайтлом), також додає хеш-теги
 	/// </summary>
-	public class TwitterTextCreator
+	public class TwitterTextCreator: ITwitterTextCreator
 	{
 		public string CreateTwitterText(string url, string title)
 		{

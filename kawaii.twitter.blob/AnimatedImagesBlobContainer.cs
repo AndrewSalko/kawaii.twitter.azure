@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Storage;
 
@@ -11,7 +12,7 @@ namespace kawaii.twitter.blob
 	/// Контейнер для зберігання анімованих зображень (.gif) для різних постів
 	/// Правило іменування: "Папка slug поста:імя файлу.gif"
 	/// </summary>
-	public class AnimatedImagesBlobContainer
+	public class AnimatedImagesBlobContainer: IBlobDownload
 	{
 		public const string CONTAINER_NAME = "animated-images";
 
@@ -79,5 +80,22 @@ namespace kawaii.twitter.blob
 			return blobName;
 		}
 
+		public async Task<byte[]> GetBlobBody(string blobName)
+		{
+			if (string.IsNullOrEmpty(blobName))
+				throw new ArgumentNullException(nameof(blobName));
+
+			var blobClient = _ContainerClient.GetBlobClient(blobName);
+			if (!blobClient.Exists())
+				throw new ArgumentException($"Blob not found: {blobName}");
+
+			using (var ms = new MemoryStream())
+			{
+				var resp = await blobClient.DownloadToAsync(ms);
+
+				byte[] body = ms.ToArray();
+				return body;
+			}
+		}
 	}
 }

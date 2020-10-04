@@ -41,7 +41,7 @@ namespace kawaii.twitter.db
 			var modelSpecialDay = new CreateIndexModel<SitePage>(keysSpecialDay);
 
 			var keysTweetDate = Builders<SitePage>.IndexKeys.Ascending(x => x.TweetDate);
-			var modelTweetDate = new CreateIndexModel<SitePage>(keysSpecialDay);
+			var modelTweetDate = new CreateIndexModel<SitePage>(keysTweetDate);
 
 			var keysURL = Builders<SitePage>.IndexKeys.Ascending(x => x.URL);
 			var modelURL = new CreateIndexModel<SitePage>(keysURL);

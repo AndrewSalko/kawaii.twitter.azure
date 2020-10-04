@@ -54,5 +54,14 @@ namespace kawaii.twitter.db
 			return dispName;
 		}
 
+		public string GetFileName()
+		{
+			string[] parts = BlobName.Split(':');
+			if (parts.Length != 2)
+				throw new ApplicationException("Invalid BlobName:" + BlobName);
+
+			return parts[1];
+		}
+
 	}
 }

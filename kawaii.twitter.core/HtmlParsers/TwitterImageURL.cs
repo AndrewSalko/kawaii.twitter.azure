@@ -10,19 +10,26 @@ namespace kawaii.twitter.core.HtmlParsers
 	/// Для окремої сторінки (поста) де кілька зображень обирає одне випадковим чином,
 	/// та повертає її twitter-URL (посилання на повнорозмірне зображення)
 	/// </summary>
-	public class TwitterImageURL
+	public class TwitterImageURL: ITwitterImageURL
 	{
+		HttpClient _HttpClient;
+
+		public TwitterImageURL(HttpClient httpClient)
+		{
+			_HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+		}
+
 		/// <summary>
 		/// (!) Описание сделать того что это будет именно случайное изображение
 		/// </summary>
 		/// <param name="client">HttpClient будет жить как статик внутри ф-ции один на всех</param>
 		/// <param name="pageURL"></param>
 		/// <returns></returns>
-		public async Task<string> GetTwitterImageFileURL(HttpClient client, string pageURL)
+		public async Task<string> GetTwitterImageFileURL(string pageURL)
 		{
 			TwitterImageExtractor extractor = new TwitterImageExtractor();
 
-			string htmlBody = await client.GetStringAsync(pageURL);
+			string htmlBody = await _HttpClient.GetStringAsync(pageURL);
 
 			//Здесь мы проведем анализ - соберем все ссылки на аттачи-изображения на этой странице
 			AttachPagesLoader attachPagesLoader = new AttachPagesLoader(pageURL, htmlBody);
@@ -37,7 +44,7 @@ namespace kawaii.twitter.core.HtmlParsers
 				string urlToGetImage = imagePagesURLs[indexOfURL];
 
 				//теперь извлечем оттуда тело html и его изображение
-				string htmlBodySubPage = await client.GetStringAsync(urlToGetImage);
+				string htmlBodySubPage = await _HttpClient.GetStringAsync(urlToGetImage);
 
 				string subPageImageURL = extractor.ExtractImageURL(htmlBodySubPage);
 				if (!string.IsNullOrEmpty(subPageImageURL))

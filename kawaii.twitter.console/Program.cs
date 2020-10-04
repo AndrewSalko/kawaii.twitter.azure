@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using kawaii.twitter.blob;
+using kawaii.twitter.core.SiteMap;
 
 namespace kawaii.twitter.console
 {
@@ -139,7 +140,10 @@ namespace kawaii.twitter.console
 
 			kawaii.twitter.core.DatabaseFromSitemapUpdater databaseFromSitemapUpdater = new kawaii.twitter.core.DatabaseFromSitemapUpdater(sitePages);
 
-			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(_HttpClient)
+			ISiteMapWebDownloader siteMapWebDownloader = new SiteMapWebDownloader(_HttpClient);
+			IPostBodyLoader postBodyLoader = new PostBodyLoader(_HttpClient);
+
+			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(siteMapWebDownloader, postBodyLoader)
 			{
 				//якщо потрібно оновити лише "найновіші пости", наприклад 10 останніх - передати більше 0. Якщо 0 - то оновити усі
 				LimitCount = limitUpdateCount

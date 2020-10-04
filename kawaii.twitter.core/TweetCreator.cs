@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using kawaii.twitter.db;
-using MongoDB.Driver;
-using MongoDB.Driver.Linq;  //https://mongodb-documentation.readthedocs.io/en/latest/ecosystem/tutorial/use-linq-queries-with-csharp-driver.html#gsc.tab=0
+using kawaii.twitter.blob;
+using kawaii.twitter.core.HtmlParsers;
+using kawaii.twitter.core.SelectLogic;
+using kawaii.twitter.core.Text;
+using kawaii.twitter.core.TwitterService;
 
 namespace kawaii.twitter.core
 {
@@ -13,28 +15,69 @@ namespace kawaii.twitter.core
 	/// </summary>
 	public class TweetCreator
 	{
+		IPageForTwittingSelector _Selector;
+		IService _TwitterService;
 
-		public TweetCreator()
+		ITwitterTextCreator _TwitterTextCreator;
+
+		ITwitterImageURL _TwitterImageURL;
+
+		IImageOnWeb _ImageOnWeb;
+
+		IBlobDownload _BlobDownload;
+
+		ILastTweetUpdater _LastTweetUpdater;
+
+		public TweetCreator(IPageForTwittingSelector selector, ITwitterTextCreator twitterTextCreator, ITwitterImageURL twitterImageURL, IImageOnWeb imageOnWeb, IBlobDownload blobDownload, IService twitterService, ILastTweetUpdater lastTweetUpdater)
 		{
+			_Selector = selector ?? throw new ArgumentNullException(nameof(selector));
+			_TwitterTextCreator = twitterTextCreator ?? throw new ArgumentNullException(nameof(twitterTextCreator));
+			_TwitterImageURL = twitterImageURL ?? throw new ArgumentNullException(nameof(twitterImageURL));
+			_ImageOnWeb = imageOnWeb ?? throw new ArgumentNullException(nameof(imageOnWeb));
+			_BlobDownload = blobDownload ?? throw new ArgumentNullException(nameof(blobDownload));
+			_TwitterService = twitterService ?? throw new ArgumentNullException(nameof(twitterService));
+			_LastTweetUpdater = lastTweetUpdater ?? throw new ArgumentNullException(nameof(lastTweetUpdater));
 		}
 
-		//public async Task Execute()
-		//{
+		public async Task Execute()
+		{
+			//получаем вариант твита из селектора...
+			TwittData data = await _Selector.GetPageForTwitting();
 
-		//	string imageFileName = "";		//TODO@: имя файла (может быть gif, jpg...)
-		//	byte[] imageBody = null;		//TODO@: тело файла загрузить в память целиком (он все же, не более пару МБ, переживет)
+			string imageFileName;
+			byte[] imageBody;
 
+			string url = data.Page.URL;
 
-		//	string url = "https://........";	//TODO@: урл поста
-		//	string postTitle = "Some title";    //TODO@: тайтл поста
+			if (data.Image != null)
+			{
+				//нужно сделать твит но изображение берем из указанного,тело файла - его надо получить из блоб-сервиса
+				imageFileName = data.Image.GetFileName();
+				imageBody = await _BlobDownload.GetBlobBody(data.Image.BlobName);
+			}
+			else
+			{
+				//изображение твита будем брать случайное прямо из поста
+				string imgURL = await _TwitterImageURL.GetTwitterImageFileURL(url);
+				if (string.IsNullOrEmpty(imgURL))
+					throw new ApplicationException("Can't found image url for post:" + url);
 
-		//	var textCreator = new Text.TwitterTextCreator();
-		//	string tweetText = textCreator.CreateTwitterText(url, postTitle);
+				//скачать из инета изображение.. нужно его имя файла и тело
+				ImageInfo imgInfo = await _ImageOnWeb.Download(imgURL);
 
-		//	var service = new TwitterService.Service();
+				imageFileName = imgInfo.FileName;
+				imageBody = imgInfo.Body;
+			}
+			
+			string postTitle = data.Page.Title;
 
-		//	await service.TweetWithMedia(tweetText, imageFileName, imageBody);
-		//}
+			string tweetText = _TwitterTextCreator.CreateTwitterText(url, postTitle);
+
+			await _TwitterService.TweetWithMedia(tweetText, imageFileName, imageBody);
+
+			//после успешного твита обновить в базе даты
+			_LastTweetUpdater.UpdateLastTweetDate(data);
+		}
 
 
 	}
