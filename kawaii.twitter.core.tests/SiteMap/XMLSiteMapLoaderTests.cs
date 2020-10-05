@@ -17,18 +17,34 @@ namespace kawaii.twitter.core.tests.SiteMap
 
 
 		[TestMethod]
-		[Description("Аргумент null - выброс исключения")]
+		[Description("Аргумент siteMapDownloader==null - выброс исключения")]
 		[TestCategory("XMLSiteMapLoader")]
-		public void XMLSiteMapLoader_HttpClient_Null_Exception()
+		public void XMLSiteMapLoader_SiteMapDownloader_Null_Exception()
 		{
 			try
 			{
-				var loader = new XMLSiteMapLoader(null);
+				var loader = new XMLSiteMapLoader(null, new Stubs.PostBodyLoaderStub());
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.ParamName == "httpClient");
+				Assert.IsTrue(ex.ParamName == "siteMapWebDownloader");
+			}
+		}
+
+		[TestMethod]
+		[Description("Аргумент siteMapDownloader==null - выброс исключения")]
+		[TestCategory("XMLSiteMapLoader")]
+		public void XMLSiteMapLoader_PostBodyLoader_Null_Exception()
+		{
+			try
+			{
+				var loader = new XMLSiteMapLoader(new Stubs.SiteMapWebDownloaderStub(), null);
+				Assert.Fail("Очікувалося ArgumentNullException");
+			}
+			catch (ArgumentNullException ex)
+			{
+				Assert.IsTrue(ex.ParamName == "postBodyLoader");
 			}
 		}
 
@@ -38,8 +54,20 @@ namespace kawaii.twitter.core.tests.SiteMap
 		[TestCategory("XMLSiteMapLoader")]
 		public void XMLSiteMapLoader_LoadSiteMap()
 		{
-			HttpClient client = new HttpClient();
-			var loader = new XMLSiteMapLoader(client);
+			var siteMapDown = new Stubs.SiteMapWebDownloaderStub
+			{
+				DontThrowException = true,
+				ResultBody = ""    //TODO@: загрузчить частичную имитацию карты сайта
+			};
+
+			var postBodyDown = new Stubs.PostBodyLoaderStub
+			{
+				DontThrowException = true
+			};
+			//postBodyDown.URLToBody
+
+
+			var loader = new XMLSiteMapLoader(siteMapDown, postBodyDown);
 			var postInfos = loader.Load(_SITEMAP_POSTS_URL).Result;
 
 			//в реальной карте сайта что-то должно быть...
