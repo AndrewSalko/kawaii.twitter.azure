@@ -29,6 +29,8 @@ namespace kawaii.twitter.core.tests.SiteMap.Stubs
 				return URLToBody[url];
 			});
 
+			task.Start();
+
 			string result = await task;
 			return result;
 		}

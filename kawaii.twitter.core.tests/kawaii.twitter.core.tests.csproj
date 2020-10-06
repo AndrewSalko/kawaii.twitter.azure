@@ -17,4 +17,10 @@
     <ProjectReference Include="..\kawaii.twitter.core\kawaii.twitter.core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="SiteMap\sitemap-test.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
