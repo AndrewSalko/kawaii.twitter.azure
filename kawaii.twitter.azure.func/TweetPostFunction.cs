@@ -27,6 +27,8 @@ namespace kawaii.twitter.azure.func
     /// </summary>
     public static class TweetPostFunction
     {
+		static HttpClient _HttpClient = new HttpClient();
+
 		[FunctionName("TweetPostFunction")]
 		public static async void Run([TimerTrigger("0 0 * * * *")] TimerInfo timer, ILogger log)
 		{
@@ -59,11 +61,9 @@ namespace kawaii.twitter.azure.func
 			sitePageCollection.Initialize(azureSiteDBConnectionString, true, null, null);
 			var sitePagesCollection = sitePageCollection.SitePages;
 
-			HttpClient httpClient = new HttpClient();
-
 			ITwitterTextCreator textCreator = new kawaii.twitter.core.Text.TwitterTextCreator();
-			IImageOnWeb imageOnWeb = new kawaii.twitter.core.HtmlParsers.ImageOnWeb(httpClient);
-			ITwitterImageURL twitterImageURL = new kawaii.twitter.core.HtmlParsers.TwitterImageURL(httpClient);
+			IImageOnWeb imageOnWeb = new kawaii.twitter.core.HtmlParsers.ImageOnWeb(_HttpClient);
+			ITwitterImageURL twitterImageURL = new kawaii.twitter.core.HtmlParsers.TwitterImageURL(_HttpClient);
 
 			//--- блок для lastTweetUpdater
 			var dateSupply = new kawaii.twitter.core.Env.DateSupply();
