@@ -45,6 +45,26 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			throw new NotImplementedException();
 		}
 
+		public void AggregateToCollection<TResult>(PipelineDefinition<SitePage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void AggregateToCollection<TResult>(IClientSessionHandle session, PipelineDefinition<SitePage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task AggregateToCollectionAsync<TResult>(PipelineDefinition<SitePage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task AggregateToCollectionAsync<TResult>(IClientSessionHandle session, PipelineDefinition<SitePage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
 		public BulkWriteResult<SitePage> BulkWrite(IEnumerable<WriteModel<SitePage>> requests, BulkWriteOptions options = null, CancellationToken cancellationToken = default)
 		{
 			throw new NotImplementedException();

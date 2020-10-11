@@ -45,6 +45,26 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 			throw new NotImplementedException();
 		}
 
+		public void AggregateToCollection<TResult>(PipelineDefinition<AnimatedImage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void AggregateToCollection<TResult>(IClientSessionHandle session, PipelineDefinition<AnimatedImage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task AggregateToCollectionAsync<TResult>(PipelineDefinition<AnimatedImage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task AggregateToCollectionAsync<TResult>(IClientSessionHandle session, PipelineDefinition<AnimatedImage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
 		public BulkWriteResult<AnimatedImage> BulkWrite(IEnumerable<WriteModel<AnimatedImage>> requests, BulkWriteOptions options = null, CancellationToken cancellationToken = default)
 		{
 			throw new NotImplementedException();
