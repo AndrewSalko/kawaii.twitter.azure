@@ -19,6 +19,7 @@ using kawaii.twitter.core.SelectLogic.Images.Find;
 using kawaii.twitter.core.SelectLogic.URL;
 using kawaii.twitter.core.SelectLogic.PageOrExternalImage;
 using kawaii.twitter.core.SelectLogic.Images.ExcludeUsed;
+using System.Threading.Tasks;
 
 namespace kawaii.twitter.azure.func
 {
@@ -30,7 +31,7 @@ namespace kawaii.twitter.azure.func
 		static HttpClient _HttpClient = new HttpClient();
 
 		[FunctionName("TweetPostFunction")]
-		public static async void Run([TimerTrigger("0 0 * * * *")] TimerInfo timer, ILogger log)
+		public static async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo timer, ILogger log)
 		{
 			//https://docs.microsoft.com/ru-ru/azure/azure-functions/functions-bindings-timer?tabs=csharp#ncrontab-expressions
 			//0 */5 * * * * - каждые 5 мин
