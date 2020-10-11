@@ -7,7 +7,7 @@ using kawaii.twitter.db;
 
 namespace kawaii.twitter.core.SelectLogic.Images.ExcludeUsed
 {
-	class AnimatedSelectorWithExcludeLast: IAnimatedSelectorWithExcludeLast
+	public class AnimatedSelectorWithExcludeLast: IAnimatedSelectorWithExcludeLast
 	{
 		public AnimatedSelectorWithExcludeLast()
 		{

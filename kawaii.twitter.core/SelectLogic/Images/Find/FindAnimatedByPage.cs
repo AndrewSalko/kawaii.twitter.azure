@@ -14,7 +14,7 @@ namespace kawaii.twitter.core.SelectLogic.Images.Find
 	/// <summary>
 	/// Получает связанный с заданным url набор аним.изображений
 	/// </summary>
-	public class FindAnimatedByPage
+	public class FindAnimatedByPage: IFindAnimatedByPage
 	{
 		IMongoQueryable<AnimatedImage> _AnimatedImages;
 		IFolderFromURL _FolderFromURL;

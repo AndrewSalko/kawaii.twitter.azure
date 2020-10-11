@@ -8,7 +8,7 @@ using MongoDB.Driver.Linq;
 
 namespace kawaii.twitter.core.SelectLogic.FindPageForBlob
 {
-	class FindPageByBlobName: IFindPageByBlobName
+	public class FindPageByBlobName: IFindPageByBlobName
 	{
 		IMongoQueryable<SitePage> _Pages;
 		IBlobNameToURLPart _BlobNameToURLPart;

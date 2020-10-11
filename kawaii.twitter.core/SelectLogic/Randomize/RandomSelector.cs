@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kawaii.twitter.core.SelectLogic.Randomize
 {
-	class RandomSelector: IRandomSelector
+	public class RandomSelector: IRandomSelector
 	{
 		Random _Rnd;
 

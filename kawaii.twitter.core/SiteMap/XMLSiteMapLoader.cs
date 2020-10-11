@@ -13,7 +13,7 @@ namespace kawaii.twitter.core.SiteMap
 	///	Завантажує та парсить карту сайта (зазвичай це карта постів)
 	/// https://kawaii-mobile.com/post.xml
 	/// </summary>
-	public class XMLSiteMapLoader
+	public class XMLSiteMapLoader: IXMLSiteMapLoader
 	{
 		ISiteMapWebDownloader _SiteMapWebDownloader;
 		IPostBodyLoader _PostBodyLoader;

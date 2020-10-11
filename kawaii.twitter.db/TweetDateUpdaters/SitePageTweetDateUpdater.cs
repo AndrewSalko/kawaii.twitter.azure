@@ -28,7 +28,7 @@ namespace kawaii.twitter.db.TweetDateUpdaters
 				throw new ArgumentException("Id is ObjectId.Empty", nameof(page));
 
 			if (date == DateTime.MinValue)
-				throw new ArgumentException(nameof(date));
+				throw new ArgumentException(nameof(date), nameof(date));
 
 			var filter = Builders<SitePage>.Filter.Eq(x => x.Id, page.Id);
 			var update = Builders<SitePage>.Update.Set(x => x.TweetDate, date);

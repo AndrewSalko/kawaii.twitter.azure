@@ -7,6 +7,12 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\kawaii.twitter.blob\kawaii.twitter.blob.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.core\kawaii.twitter.core.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.db\kawaii.twitter.db.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.interfaces\kawaii.twitter.interfaces.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

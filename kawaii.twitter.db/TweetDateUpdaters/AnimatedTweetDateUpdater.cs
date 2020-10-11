@@ -31,7 +31,7 @@ namespace kawaii.twitter.db.TweetDateUpdaters
 				throw new ArgumentException("Id is ObjectId.Empty", nameof(img));
 
 			if (date == DateTime.MinValue)
-				throw new ArgumentException(nameof(date));
+				throw new ArgumentException(nameof(date), nameof(date));
 
 			var filter = Builders<AnimatedImage>.Filter.Eq(x => x.Id, img.Id);
 			var update = Builders<AnimatedImage>.Update.Set(x => x.TweetDate, date);

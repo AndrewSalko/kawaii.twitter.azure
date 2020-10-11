@@ -25,7 +25,7 @@ namespace kawaii.twitter.core.SelectLogic
 				throw new ArgumentNullException(nameof(data));
 
 			if (data.Page == null)
-				throw new ArgumentNullException("data.Page==null", nameof(data));
+				throw new ArgumentNullException(nameof(data), "data.Page==null");
 
 			var page = data.Page;
 
