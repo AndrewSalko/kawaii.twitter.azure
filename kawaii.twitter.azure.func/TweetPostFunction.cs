@@ -58,9 +58,13 @@ namespace kawaii.twitter.azure.func
 			animatedImageCollection.Initialize(azureSiteDBConnectionString, true, null, null);
 			var imagesCollection = animatedImageCollection.AnimatedImages;
 
+			log.LogInformation($"imagesCollection init done: {DateTime.Now}");
+
 			SitePageCollection sitePageCollection = new SitePageCollection();
 			sitePageCollection.Initialize(azureSiteDBConnectionString, true, null, null);
 			var sitePagesCollection = sitePageCollection.SitePages;
+
+			log.LogInformation($"sitePagesCollection init done: {DateTime.Now}");
 
 			ITwitterTextCreator textCreator = new kawaii.twitter.core.Text.TwitterTextCreator();
 			IImageOnWeb imageOnWeb = new kawaii.twitter.core.HtmlParsers.ImageOnWeb(_HttpClient);
@@ -103,6 +107,8 @@ namespace kawaii.twitter.azure.func
 			IPageForTwittingSelector pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast);
 
 			var tweetCreator = new kawaii.twitter.core.TweetCreator(pageForTwittingSelector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater);
+
+			log.LogInformation($"tweetCreator.Execute: {DateTime.Now}");
 
 			//выполнить твит заданной страницы и изображения
 			await tweetCreator.Execute();
