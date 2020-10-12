@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LinqToTwitter;
-
+using Tweetinvi;
+using Tweetinvi.Logic.QueryParameters;
 
 namespace kawaii.twitter.core.TwitterService
 {
@@ -76,52 +76,27 @@ namespace kawaii.twitter.core.TwitterService
 			if (string.IsNullOrEmpty(twitterAccessTokenSecret))
 				throw new KeyNotFoundException(ENV_API_TOKEN_SECRET);
 
-			IAuthorizer auth = new SingleUserAuthorizer
-			{
-				CredentialStore = new SingleUserInMemoryCredentialStore
-				{
-					ConsumerKey = twitterAPIKey,
-					ConsumerSecret = twitterAPISecret,
-					AccessToken = twitterAccessToken,
-					AccessTokenSecret = twitterAccessTokenSecret
-				}
-			};
+			var userClient = new TwitterClient(twitterAPIKey, twitterAPISecret, twitterAccessToken, twitterAccessTokenSecret);
 
-			await auth.AuthorizeAsync();
+			var uploadTweetImageParameters = new Tweetinvi.Parameters.UploadTweetImageParameters(imageFileBody);
 
-			var context = new TwitterContext(auth);
+			var uploadedImage = await userClient.Upload.UploadTweetImageAsync(uploadTweetImageParameters);
 
-			string mediaType = null;
+			//TODO@: рассмотреть вопрос Alt-текста для изображения
+			//await userClient.Upload.AddMediaMetadataAsync(new MediaMetadata(uploadedImage)
+			//{
+			//	AltText = "Chaos;Head Rimi Sakihata Nanami Nishijo"
+			//});
 
-			string mediaCategory = _MEDIA_CATEGORY_IMAGE;
+			if (uploadedImage.Id == null)
+				throw new ApplicationException("uploadedImage.Id == null");
 
-			string ext = Path.GetExtension(imageFileName);
-			if (!string.IsNullOrEmpty(ext))
-			{
-				ext = ext.ToLower().Replace(".", string.Empty);
-				if (ext == _GIF_EXT)
-				{
-					mediaCategory = _MEDIA_CATEGORY_GIF;
-				}
+			long mediaID = uploadedImage.Id.Value;
 
-				mediaType = string.Format("image/{0}", ext);
-			}
+			var publishTweetParameters = new Tweetinvi.Parameters.PublishTweetParameters(tweetText);
+			publishTweetParameters.MediaIds.Add(mediaID);
 
-			if (string.IsNullOrEmpty(mediaType))
-			{
-				string msg = $"Неможливо визначити тип зображення для файлу {imageFileName}";
-				throw new ApplicationException(msg);
-			}
-
-			var uploadTaskResult = await context.UploadMediaAsync(imageFileBody, mediaType, mediaCategory);
-			var mediaID = uploadTaskResult.MediaID;
-
-			ulong[] mediaIDs = new ulong[] { mediaID };
-
-			//TODO@: можно даже задать alt-текст? неплохо изучить позже
-			//mediaIds.ForEach(async id => await twitterCtx.CreateMediaMetadataAsync(id, $"Test Alt Text for Media ID: {id}"));
-
-			var result = await context.TweetAsync(tweetText, mediaIDs);
+			await userClient.Tweets.PublishTweetAsync(publishTweetParameters);
 		}
 	}
 }

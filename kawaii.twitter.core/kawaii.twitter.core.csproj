@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kawaii.twitter.blob\kawaii.twitter.blob.csproj" />
-    <ProjectReference Include="..\kawaii.twitter.db\kawaii.twitter.db.csproj" />
-    <ProjectReference Include="..\kawaii.twitter.interfaces\kawaii.twitter.interfaces.csproj" />
+    <PackageReference Include="TweetinviAPI" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="linqtotwitter" Version="5.1.3" />
+    <ProjectReference Include="..\kawaii.twitter.blob\kawaii.twitter.blob.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.db\kawaii.twitter.db.csproj" />
+    <ProjectReference Include="..\kawaii.twitter.interfaces\kawaii.twitter.interfaces.csproj" />
   </ItemGroup>
 
 </Project>
