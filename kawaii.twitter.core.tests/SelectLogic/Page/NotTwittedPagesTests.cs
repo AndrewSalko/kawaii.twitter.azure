@@ -144,8 +144,9 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			string dbName = "unit-test-kawaii";
 			string collName = "not-twitted-pages";
 
-			var sitePagesCollection = new SitePageCollection();
-			var pages = sitePagesCollection.Initialize(connString, false, dbName, collName);
+			var db = new Database(connString, false, dbName);
+			var sitePagesCollection = new SitePageCollection(db, collName);
+			var pages = sitePagesCollection.SitePages;
 
 			//удаляем все записи, заполняем тест данными
 			var delFilter = Builders<SitePage>.Filter.Exists(x => x.URL);

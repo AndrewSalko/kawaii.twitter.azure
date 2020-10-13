@@ -49,8 +49,9 @@ namespace kawaii.twitter.console
 
 			_Log.Log("Found {0} animated blobs", blobNames.Length);
 
-			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection();
-			animatedImageCollection.Initialize(_AzureSiteDBConnectionString, true, null, null);
+			var db = new Database(_AzureSiteDBConnectionString, true, null);
+
+			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(db, null);
 
 			var imagesCollection = animatedImageCollection.AnimatedImages;
 

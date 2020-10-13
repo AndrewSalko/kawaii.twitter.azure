@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using kawaii.twitter.blob;
 using kawaii.twitter.core.SiteMap;
+using kawaii.twitter.db;
 
 namespace kawaii.twitter.console
 {
@@ -133,8 +134,8 @@ namespace kawaii.twitter.console
 		/// <returns></returns>
 		static async Task _UpdateDBFromSitemap(string azureDBConnectionString, int limitUpdateCount)
 		{
-			kawaii.twitter.db.SitePageCollection sitePageCollection = new db.SitePageCollection();
-			sitePageCollection.Initialize(azureDBConnectionString, true, null, null);
+			var db = new Database(azureDBConnectionString, true, null);
+			kawaii.twitter.db.SitePageCollection sitePageCollection = new db.SitePageCollection(db, null);
 
 			var sitePages = sitePageCollection.SitePages;
 

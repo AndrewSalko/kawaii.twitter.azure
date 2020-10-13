@@ -93,8 +93,10 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 			string dbName = "unit-test-kawaii";
 			string collName = "not-twitted-animated";
 
-			var animatedCollection = new AnimatedImageCollection();
-			var pages = animatedCollection.Initialize(connString, false, dbName, collName);
+			var db = new Database(connString, false, dbName);
+
+			var animatedCollection = new AnimatedImageCollection(db, collName);
+			var pages = animatedCollection.AnimatedImages;
 
 			//удаляем все записи, заполняем тест данными
 			var delFilter = Builders<AnimatedImage>.Filter.Exists(x => x.BlobName);

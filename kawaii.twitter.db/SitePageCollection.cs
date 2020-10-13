@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace kawaii.twitter.db
 {
-	public class SitePageCollection : BaseCollection
+	public class SitePageCollection
 	{
 		/// <summary>
 		/// Коллекция документов - страницы сайта (посты сайта). Эту константу может использовать вызывающая сторона для передачи
@@ -21,9 +21,12 @@ namespace kawaii.twitter.db
 		/// <param name="dataBaseName">База данных. Если передать null, будет использована константа</param>
 		/// <param name="collectionName">Имя коллекции. Если передать null, будет использована константа COLLECTION_SITE_PAGES</param>
 		/// <returns></returns>
-		public IMongoCollection<SitePage> Initialize(string connectionString, bool useSSL, string dataBaseName, string collectionName)
+		public SitePageCollection(IDatabase database, string collectionName)
 		{
-			var db = _Initialize(connectionString, useSSL, dataBaseName);
+			if (database == null)
+				throw new ArgumentNullException(nameof(database));
+
+			var db = database.DB;
 
 			if (string.IsNullOrEmpty(collectionName))
 				collectionName = COLLECTION_SITE_PAGES;
@@ -48,8 +51,6 @@ namespace kawaii.twitter.db
 
 			CreateIndexModel<SitePage>[] indexModels = { modelBlocked, modelLastModified, modelSpecialDay, modelTweetDate, modelURL };
 			SitePages.Indexes.CreateMany(indexModels);
-
-			return SitePages;
 		}
 
 		public IMongoCollection<SitePage> SitePages

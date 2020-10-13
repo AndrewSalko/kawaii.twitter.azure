@@ -18,8 +18,10 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			string connString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
 			string dbName = "unit-test-kawaii";
 
-			SitePageCollection sitePageCollection = new SitePageCollection();
-			var sitePages = sitePageCollection.Initialize(connString, false, dbName, collectionName);
+			var db = new Database(connString, false, dbName);
+
+			SitePageCollection sitePageCollection = new SitePageCollection(db, collectionName);
+			var sitePages = sitePageCollection.SitePages;
 
 			//коллекцию очистить от данных
 			var delFilter = Builders<SitePage>.Filter.Exists(x => x.URL);
@@ -45,8 +47,10 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			string connString = "mongodb://localhost:27017/?readPreference=primary&appname=kawaiitwitter&ssl=false";
 			string dbName = "unit-test-kawaii";
 
-			AnimatedImageCollection collection = new AnimatedImageCollection();
-			var animatedCollection = collection.Initialize(connString, false, dbName, collectionName);
+			var db = new Database(connString, false, dbName);
+
+			AnimatedImageCollection collection = new AnimatedImageCollection(db, collectionName);
+			var animatedCollection = collection.AnimatedImages;
 
 			//коллекцию очистить от данных
 			var delFilter = Builders<AnimatedImage>.Filter.Exists(x => x.BlobName);

@@ -77,8 +77,10 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Find
 			string dbName = "unit-test-kawaii";
 			string collName = "animatedimage-find-animated-by-page";
 
-			var animatedImageCollection = new AnimatedImageCollection();
-			var animated = animatedImageCollection.Initialize(connString, false, dbName, collName);
+			var db = new Database(connString, false, dbName);
+
+			var animatedImageCollection = new AnimatedImageCollection(db, collName);
+			var animated = animatedImageCollection.AnimatedImages;
 
 			//коллекцию очистить от данных
 			var delFilter = Builders<AnimatedImage>.Filter.Exists(x => x.BlobName);

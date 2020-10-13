@@ -56,14 +56,16 @@ namespace kawaii.twitter.azure.func
 
 			Logger logger = new Logger(log);
 
-			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection();
-			animatedImageCollection.Initialize(azureSiteDBConnectionString, true, null, null);
+			IDatabase database = new Database(azureSiteDBConnectionString, true, null);
+
+			log.LogInformation($"database connected: {DateTime.Now}");
+
+			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(database, null);
 			var imagesCollection = animatedImageCollection.AnimatedImages;
 
 			log.LogInformation($"imagesCollection init done: {DateTime.Now}");
 
-			SitePageCollection sitePageCollection = new SitePageCollection();
-			sitePageCollection.Initialize(azureSiteDBConnectionString, true, null, null);
+			SitePageCollection sitePageCollection = new SitePageCollection(database, null);
 			var sitePagesCollection = sitePageCollection.SitePages;
 
 			log.LogInformation($"sitePagesCollection init done: {DateTime.Now}");

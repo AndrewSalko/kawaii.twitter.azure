@@ -25,8 +25,10 @@ namespace kawaii.twitter.core.tests.SelectLogic.FindPageForBlob
 			string dbName = "unit-test-kawaii";
 			string collName = "sitepages-find-page-by-blobname";
 
-			SitePageCollection sitePageCollection = new SitePageCollection();
-			var sitePages = sitePageCollection.Initialize(connString, false, dbName, collName);
+			var db = new Database(connString, false, dbName);
+
+			SitePageCollection sitePageCollection = new SitePageCollection(db, collName);
+			var sitePages = sitePageCollection.SitePages;
 
 			//коллекцию очистить от данных
 			var delFilter = Builders<SitePage>.Filter.Exists(x => x.URL);
