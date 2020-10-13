@@ -61,7 +61,7 @@ namespace kawaii.twitter.core.tests.TweetCreator
 				ResultPage = pageStellvia
 			};
 
-			var creator = new kawaii.twitter.core.TweetCreator(selector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater);
+			var creator = new kawaii.twitter.core.TweetCreator(selector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater, new Stubs.Logger());
 			creator.Execute().Wait();
 
 			//проверка состояния базы после данной операции:

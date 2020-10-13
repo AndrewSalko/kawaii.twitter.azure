@@ -105,7 +105,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = animSelectorStub;
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast);
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
 

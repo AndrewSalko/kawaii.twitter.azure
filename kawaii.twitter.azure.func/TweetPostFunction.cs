@@ -54,6 +54,8 @@ namespace kawaii.twitter.azure.func
 				return;
 			}
 
+			Logger logger = new Logger(log);
+
 			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection();
 			animatedImageCollection.Initialize(azureSiteDBConnectionString, true, null, null);
 			var imagesCollection = animatedImageCollection.AnimatedImages;
@@ -104,9 +106,9 @@ namespace kawaii.twitter.azure.func
 
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new kawaii.twitter.core.SelectLogic.Images.ExcludeUsed.AnimatedSelectorWithExcludeLast();
 
-			IPageForTwittingSelector pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast);
+			IPageForTwittingSelector pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, logger);
 
-			var tweetCreator = new kawaii.twitter.core.TweetCreator(pageForTwittingSelector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater);
+			var tweetCreator = new kawaii.twitter.core.TweetCreator(pageForTwittingSelector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater, logger);
 
 			log.LogInformation($"tweetCreator.Execute: {DateTime.Now}");
 

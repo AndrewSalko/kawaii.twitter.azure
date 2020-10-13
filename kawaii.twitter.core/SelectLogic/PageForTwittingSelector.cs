@@ -53,7 +53,9 @@ namespace kawaii.twitter.core.SelectLogic
 		/// </summary>
 		IAnimatedSelectorWithExcludeLast _AnimatedSelectorWithExcludeLast;
 
-		public PageForTwittingSelector(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages, IFindAnimatedByPage findAnimatedByPage, IPageOrExternalImageSelector pageOrExternalImageSelector, IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast)
+		kawaii.twitter.Logs.ILogger _Log;
+
+		public PageForTwittingSelector(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages, IFindAnimatedByPage findAnimatedByPage, IPageOrExternalImageSelector pageOrExternalImageSelector, IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast, kawaii.twitter.Logs.ILogger log)
 		{
 			_PageSelectorForNewPages = pageSelectorForNewPages ?? throw new ArgumentNullException(nameof(pageSelectorForNewPages));
 			_AnimatedSelectorForNewImages = animatedSelectorForNewImages ?? throw new ArgumentNullException(nameof(animatedSelectorForNewImages));
@@ -62,6 +64,7 @@ namespace kawaii.twitter.core.SelectLogic
 			_FindAnimatedByPage = findAnimatedByPage ?? throw new ArgumentNullException(nameof(findAnimatedByPage));
 			_PageOrExternalImageSelector = pageOrExternalImageSelector ?? throw new ArgumentNullException(nameof(pageOrExternalImageSelector));
 			_AnimatedSelectorWithExcludeLast = animatedSelectorWithExcludeLast ?? throw new ArgumentNullException(nameof(animatedSelectorWithExcludeLast));
+			_Log = log ?? throw new ArgumentNullException(nameof(log));
 		}
 
 		public async Task<TwittData> GetPageForTwitting()
@@ -76,6 +79,8 @@ namespace kawaii.twitter.core.SelectLogic
 			SitePage page = await _PageSelectorForNewPages.GetPageForTwitting();
 			if (page != null)
 			{
+				_Log.Log("_PageSelectorForNewPages.GetPageForTwitting done {0}", DateTime.Now);
+
 				TwittData result = new TwittData
 				{
 					Page = page
