@@ -21,6 +21,9 @@ namespace kawaii.twitter.db
 
 			var mongoClient = new MongoClient(settings);
 
+			if (dataBaseName == null)
+				dataBaseName = DATABASE_NAME;
+
 			DB = mongoClient.GetDatabase(dataBaseName);
 		}
 
