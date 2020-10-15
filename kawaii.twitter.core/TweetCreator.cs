@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.blob;
@@ -87,7 +88,10 @@ namespace kawaii.twitter.core
 			
 			string postTitle = data.Page.Title;
 
-			string tweetText = _TwitterTextCreator.CreateTwitterText(url, postTitle);
+			//тайтл берем из базы, но изначально он был взят из html-тела, убираем спец.коды html
+			string postTitleDecoded = WebUtility.HtmlDecode(postTitle);
+
+			string tweetText = _TwitterTextCreator.CreateTwitterText(url, postTitleDecoded);
 
 			await _TwitterService.TweetWithMedia(tweetText, imageFileName, imageBody);
 
