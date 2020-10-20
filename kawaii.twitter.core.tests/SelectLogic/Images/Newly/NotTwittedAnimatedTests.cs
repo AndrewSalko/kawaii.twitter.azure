@@ -95,7 +95,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 
 			var db = new Database(connString, false, dbName);
 
-			var animatedCollection = new AnimatedImageCollection(db, collName);
+			var animatedCollection = new AnimatedImageCollection(db, collName, true);
 			var pages = animatedCollection.AnimatedImages;
 
 			//удаляем все записи, заполняем тест данными

@@ -135,7 +135,7 @@ namespace kawaii.twitter.console
 		static async Task _UpdateDBFromSitemap(string azureDBConnectionString, int limitUpdateCount)
 		{
 			var db = new Database(azureDBConnectionString, true, null);
-			kawaii.twitter.db.SitePageCollection sitePageCollection = new db.SitePageCollection(db, null);
+			kawaii.twitter.db.SitePageCollection sitePageCollection = new db.SitePageCollection(db, null, true);
 
 			var sitePages = sitePageCollection.SitePages;
 

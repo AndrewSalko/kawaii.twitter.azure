@@ -27,7 +27,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.FindPageForBlob
 
 			var db = new Database(connString, false, dbName);
 
-			SitePageCollection sitePageCollection = new SitePageCollection(db, collName);
+			SitePageCollection sitePageCollection = new SitePageCollection(db, collName, true);
 			var sitePages = sitePageCollection.SitePages;
 
 			//коллекцию очистить от данных

@@ -104,7 +104,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			string collName = "page-selector-pages";
 
 			var db = new Database(connString, false, dbName);
-			var sitePagesCollection = new SitePageCollection(db, collName);
+			var sitePagesCollection = new SitePageCollection(db, collName, true);
 			var pages = sitePagesCollection.SitePages;
 
 			//удаляем все записи, заполняем тест данными
@@ -125,7 +125,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			string collName = "page-selector-pages";
 
 			var db = new Database(connString, false, dbName);
-			var sitePagesCollection = new SitePageCollection(db, collName);
+			var sitePagesCollection = new SitePageCollection(db, collName, true);
 			var pages = sitePagesCollection.SitePages;
 
 			//удаляем все записи, заполняем тест данными

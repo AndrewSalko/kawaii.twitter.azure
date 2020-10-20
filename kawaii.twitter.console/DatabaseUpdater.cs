@@ -51,7 +51,7 @@ namespace kawaii.twitter.console
 
 			var db = new Database(_AzureSiteDBConnectionString, true, null);
 
-			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(db, null);
+			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(db, null, true);
 
 			var imagesCollection = animatedImageCollection.AnimatedImages;
 

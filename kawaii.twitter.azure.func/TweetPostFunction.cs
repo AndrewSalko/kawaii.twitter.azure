@@ -60,12 +60,28 @@ namespace kawaii.twitter.azure.func
 
 			log.LogInformation($"database connected: {DateTime.Now}");
 
-			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(database, null);
+			//если в переменных задано что "не обновлять индексы", то мы сэкономим время работы в прод-окружении - индексы создаются один раз,
+			//и дальше и так работают, хотя MongoDB и говорит что "нет проблем".
+			//Если будет нужно обновлять индексы, или будет новое окружение (новая база, коллекция и прочее) то эту переменную среды надо убрать.
+			//А когда все настроено и уже работает, ее можно создать для общего ускорения
+			string dontCreateIndexesStr = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_dont_create_indexes");
+			bool dontCreateIndexes = false;
+			if (!string.IsNullOrEmpty(dontCreateIndexesStr))
+			{
+				bool.TryParse(dontCreateIndexesStr, out dontCreateIndexes);
+			}
+
+			if (dontCreateIndexes)
+			{
+				log.LogInformation("Indexes will not updated (found env:kawaii_twitter_dont_create_indexes)");
+			}
+
+			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(database, null, !dontCreateIndexes);
 			var imagesCollection = animatedImageCollection.AnimatedImages;
 
 			log.LogInformation($"imagesCollection init done: {DateTime.Now}");
 
-			SitePageCollection sitePageCollection = new SitePageCollection(database, null);
+			SitePageCollection sitePageCollection = new SitePageCollection(database, null, !dontCreateIndexes);
 			var sitePagesCollection = sitePageCollection.SitePages;
 
 			log.LogInformation($"sitePagesCollection init done: {DateTime.Now}");

@@ -20,8 +20,9 @@ namespace kawaii.twitter.db
 		/// <param name="useSSL"></param>
 		/// <param name="dataBaseName">База данных. Если передать null, будет использована константа</param>
 		/// <param name="collectionName">Имя коллекции. Если передать null, будет использована константа COLLECTION_SITE_PAGES</param>
+		/// <param name="createIndexes">Создать (обновить) индексы</param>
 		/// <returns></returns>
-		public SitePageCollection(IDatabase database, string collectionName)
+		public SitePageCollection(IDatabase database, string collectionName, bool createIndexes)
 		{
 			if (database == null)
 				throw new ArgumentNullException(nameof(database));
@@ -33,24 +34,27 @@ namespace kawaii.twitter.db
 
 			SitePages = db.GetCollection<SitePage>(collectionName);
 
-			//готовим индексы для необходимых полей
-			var keysBlocked = Builders<SitePage>.IndexKeys.Ascending(x => x.Blocked);
-			var modelBlocked = new CreateIndexModel<SitePage>(keysBlocked);
-			
-			var keysLastModified = Builders<SitePage>.IndexKeys.Ascending(x => x.LastModified);
-			var modelLastModified = new CreateIndexModel<SitePage>(keysLastModified);
+			if (createIndexes)
+			{
+				//готовим индексы для необходимых полей
+				var keysBlocked = Builders<SitePage>.IndexKeys.Ascending(x => x.Blocked);
+				var modelBlocked = new CreateIndexModel<SitePage>(keysBlocked);
 
-			var keysSpecialDay = Builders<SitePage>.IndexKeys.Ascending(x => x.SpecialDay);
-			var modelSpecialDay = new CreateIndexModel<SitePage>(keysSpecialDay);
+				var keysLastModified = Builders<SitePage>.IndexKeys.Ascending(x => x.LastModified);
+				var modelLastModified = new CreateIndexModel<SitePage>(keysLastModified);
 
-			var keysTweetDate = Builders<SitePage>.IndexKeys.Ascending(x => x.TweetDate);
-			var modelTweetDate = new CreateIndexModel<SitePage>(keysTweetDate);
+				var keysSpecialDay = Builders<SitePage>.IndexKeys.Ascending(x => x.SpecialDay);
+				var modelSpecialDay = new CreateIndexModel<SitePage>(keysSpecialDay);
 
-			var keysURL = Builders<SitePage>.IndexKeys.Ascending(x => x.URL);
-			var modelURL = new CreateIndexModel<SitePage>(keysURL);
+				var keysTweetDate = Builders<SitePage>.IndexKeys.Ascending(x => x.TweetDate);
+				var modelTweetDate = new CreateIndexModel<SitePage>(keysTweetDate);
 
-			CreateIndexModel<SitePage>[] indexModels = { modelBlocked, modelLastModified, modelSpecialDay, modelTweetDate, modelURL };
-			SitePages.Indexes.CreateMany(indexModels);
+				var keysURL = Builders<SitePage>.IndexKeys.Ascending(x => x.URL);
+				var modelURL = new CreateIndexModel<SitePage>(keysURL);
+
+				CreateIndexModel<SitePage>[] indexModels = { modelBlocked, modelLastModified, modelSpecialDay, modelTweetDate, modelURL };
+				SitePages.Indexes.CreateMany(indexModels);
+			}
 		}
 
 		public IMongoCollection<SitePage> SitePages

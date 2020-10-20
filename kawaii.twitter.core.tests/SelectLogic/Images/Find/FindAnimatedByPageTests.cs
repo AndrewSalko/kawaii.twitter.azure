@@ -79,7 +79,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Find
 
 			var db = new Database(connString, false, dbName);
 
-			var animatedImageCollection = new AnimatedImageCollection(db, collName);
+			var animatedImageCollection = new AnimatedImageCollection(db, collName, true);
 			var animated = animatedImageCollection.AnimatedImages;
 
 			//коллекцию очистить от данных

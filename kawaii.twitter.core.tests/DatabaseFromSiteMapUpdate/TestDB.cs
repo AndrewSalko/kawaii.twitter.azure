@@ -20,7 +20,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 
 			var db = new Database(connString, false, dbName);
 
-			SitePageCollection sitePageCollection = new SitePageCollection(db, collectionName);
+			SitePageCollection sitePageCollection = new SitePageCollection(db, collectionName, true);
 			var sitePages = sitePageCollection.SitePages;
 
 			//коллекцию очистить от данных
@@ -49,7 +49,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 
 			var db = new Database(connString, false, dbName);
 
-			AnimatedImageCollection collection = new AnimatedImageCollection(db, collectionName);
+			AnimatedImageCollection collection = new AnimatedImageCollection(db, collectionName, true);
 			var animatedCollection = collection.AnimatedImages;
 
 			//коллекцию очистить от данных
