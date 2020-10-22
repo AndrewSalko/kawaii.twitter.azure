@@ -66,17 +66,18 @@ namespace kawaii.twitter.core.SiteMap
 						}
 					}
 
-					if (page.URL != null && page.LastModified != DateTime.MinValue)
-					{
-						//получить тайтл
-						string title = await _GetTitle(page.URL);
-						if (title != null)
-						{
-							page.Title = title;
-						}
+					if (page.URL == null || page.LastModified == DateTime.MinValue)
+						continue;
 
-						result.Add(page);
+					//получить тайтл
+					string title = await _GetTitle(page.URL);
+					if (title != null)
+					{
+						page.Title = title;
 					}
+
+					result.Add(page);
+					
 
 					//если лимит равен 0, то условие не выполнится никогда и цикл идет целиком
 					if (i + 1 == LimitCount)

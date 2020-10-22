@@ -22,7 +22,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		{
 			try
 			{
-				var pg = new PageSelector(null, new RandomSelector(), _MAX_PAGES_FOR_RANDOM);
+				var pg = new PageSelector(null, new RandomSelector(), null, _MAX_PAGES_FOR_RANDOM);
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
@@ -38,7 +38,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		{
 			try
 			{
-				var pg = new PageSelector(new PagesCollectionStub(), null, _MAX_PAGES_FOR_RANDOM);
+				var pg = new PageSelector(new PagesCollectionStub(), null, null, _MAX_PAGES_FOR_RANDOM);
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
@@ -54,7 +54,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		{
 			try
 			{
-				var pg = new PageSelector(new PagesCollectionStub(), new RandomSelector(), 0);
+				var pg = new PageSelector(new PagesCollectionStub(), new RandomSelector(), null, 0);
 				Assert.Fail("Очікувалося ArgumentException");
 			}
 			catch (ArgumentException ex)
@@ -62,40 +62,6 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 				Assert.IsTrue(ex.ParamName == "maxPagesForRandomSelection");
 			}
 		}
-
-
-		static readonly	SitePage _PagePrincessReDive = new SitePage
-		{
-			LastModified = new DateTime(2020, 08, 09),
-			Title = "Princess Connect! Re:Dive",
-			TweetDate = new DateTime(2020, 08, 16, 0, 0, 0),
-			URL = "https://kawaii-mobile.com/2020/08/princess-connect-redive/"
-		};
-
-		static readonly SitePage _PageSpeedGrapher = new SitePage
-		{
-			LastModified = new DateTime(2020, 08, 02),
-			Title = "Speed Grapher",
-			TweetDate = new DateTime(2020, 08, 15, 0, 0, 0),
-			URL = "https://kawaii-mobile.com/2020/08/speed-grapher/"
-		};
-
-		static readonly SitePage _PageGleipnir = new SitePage
-		{
-			LastModified = new DateTime(2020, 07, 19),
-			Title = "Gleipnir",
-			TweetDate = new DateTime(2020, 08, 14, 0, 0, 0),
-			URL = "https://kawaii-mobile.com/2020/07/gleipnir/"
-		};
-
-		static readonly SitePage _PageHameFura = new SitePage
-		{
-			LastModified = new DateTime(2020, 07, 05),
-			Title = "Otome Game no Hametsu Flag shika Nai Akuyaku Reijou ni Tensei Shiteshimatta",
-			TweetDate = new DateTime(2020, 08, 13, 0, 0, 0),
-			URL = "https://kawaii-mobile.com/2020/07/otome-game-no-hametsu-flag-shika-nai-akuyaku-reijou-ni-tensei-shiteshimatta/"
-		};
-
 
 		IMongoCollection<SitePage> _PrepareSitePagesCollection()
 		{
@@ -111,7 +77,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			var delFilter = Builders<SitePage>.Filter.Exists(x => x.URL);
 			pages.DeleteMany(delFilter);
 
-			SitePage[] pagesToAdd = new SitePage[] { _PagePrincessReDive, _PageSpeedGrapher, _PageGleipnir, _PageHameFura };
+			SitePage[] pagesToAdd = new SitePage[] { SamplePages.PagePrincessReDive, SamplePages.PageSpeedGrapher, SamplePages.PageGleipnir, SamplePages.PageHameFura };
 
 			pages.InsertMany(pagesToAdd);
 
@@ -149,7 +115,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 				Result = 0  //он будет выдавать индекс 0 для выбора
 			};
 
-			var pg = new PageSelector(pages, rndStub, _MAX_PAGES_FOR_RANDOM);
+			var pg = new PageSelector(pages, rndStub, null, _MAX_PAGES_FOR_RANDOM);
 			var resultPage = pg.GetPageForTwitting().Result;
 
 			Assert.IsNull(resultPage, "Очікувався null");
@@ -169,12 +135,12 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 				Result = 0  //он будет выдавать индекс 0 для выбора
 			};
 
-			var pg = new PageSelector(pages, rndStub, _MAX_PAGES_FOR_RANDOM);
+			var pg = new PageSelector(pages, rndStub, null, _MAX_PAGES_FOR_RANDOM);
 			var resultPage = pg.GetPageForTwitting().Result;
 
 			Assert.IsNotNull(resultPage);
 			//должно найти страницу HameFura
-			Assert.IsTrue(resultPage.URL == _PageHameFura.URL, "Очукувалася сторінка pageHameFura");
+			Assert.IsTrue(resultPage.URL == SamplePages.PageHameFura.URL, "Очукувалася сторінка pageHameFura");
 		}
 
 		[TestMethod]
@@ -190,12 +156,12 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 				Result = 1  //он будет выдавать индекс 0 для выбора
 			};
 
-			var pg = new PageSelector(pages, rndStub, _MAX_PAGES_FOR_RANDOM);
+			var pg = new PageSelector(pages, rndStub, null, _MAX_PAGES_FOR_RANDOM);
 			var resultPage = pg.GetPageForTwitting().Result;
 
 			Assert.IsNotNull(resultPage);
 			//должно найти страницу HameFura
-			Assert.IsTrue(resultPage.URL == _PageGleipnir.URL, "Очукувалася сторінка Gleipnir");
+			Assert.IsTrue(resultPage.URL == SamplePages.PageGleipnir.URL, "Очукувалася сторінка Gleipnir");
 		}
 
 		[TestMethod]
@@ -211,12 +177,12 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 				Result = 2  //он будет выдавать индекс 0 для выбора
 			};
 
-			var pg = new PageSelector(pages, rndStub, _MAX_PAGES_FOR_RANDOM);
+			var pg = new PageSelector(pages, rndStub, null, _MAX_PAGES_FOR_RANDOM);
 			var resultPage = pg.GetPageForTwitting().Result;
 
 			Assert.IsNotNull(resultPage);
 			//должно найти страницу HameFura
-			Assert.IsTrue(resultPage.URL == _PageSpeedGrapher.URL, "Очукувалася сторінка SpeedGrapher");
+			Assert.IsTrue(resultPage.URL == SamplePages.PageSpeedGrapher.URL, "Очукувалася сторінка SpeedGrapher");
 		}
 
 

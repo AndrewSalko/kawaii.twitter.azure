@@ -20,6 +20,7 @@ using kawaii.twitter.core.SelectLogic.URL;
 using kawaii.twitter.core.SelectLogic.PageOrExternalImage;
 using kawaii.twitter.core.SelectLogic.Images.ExcludeUsed;
 using System.Threading.Tasks;
+using kawaii.twitter.core.SelectLogic.SpecialDay;
 
 namespace kawaii.twitter.azure.func
 {
@@ -108,13 +109,16 @@ namespace kawaii.twitter.azure.func
 
 			int topQueryCount = 10;
 
-			IPageSelector pageSelectorForNewPages = new kawaii.twitter.core.SelectLogic.Page.NotTwittedPages(sitePagesCollection, randomSelector, topQueryCount);
+			ISpecialDaySelector specialDaySelector = new SpecialDaySelector(dateSupply, randomSelector);
+			string specialDayName = specialDaySelector.DetectSpecialDayName();
+
+			IPageSelector pageSelectorForNewPages = new kawaii.twitter.core.SelectLogic.Page.NotTwittedPages(sitePagesCollection, randomSelector, specialDayName, topQueryCount);
 			IAnimatedSelector animatedSelectorForNewImages = new kawaii.twitter.core.SelectLogic.Images.Newly.NotTwittedAnimated(imagesCollection, randomSelector, topQueryCount);
 
 			var blobNameToURLPart = new kawaii.twitter.core.SelectLogic.FindPageForBlob.BlobNameToURLPart();
 			IFindPageByBlobName findPageByBlobName=new kawaii.twitter.core.SelectLogic.FindPageForBlob.FindPageByBlobName(sitePagesCollection.AsQueryable(), blobNameToURLPart);
 
-			IPageSelector pageSelectorForAnyPages = new kawaii.twitter.core.SelectLogic.Page.PageSelector(sitePagesCollection, randomSelector, topQueryCount);
+			IPageSelector pageSelectorForAnyPages = new kawaii.twitter.core.SelectLogic.Page.PageSelector(sitePagesCollection, randomSelector, specialDayName, topQueryCount);
 
 			IFolderFromURL folderFromURL = new kawaii.twitter.core.SelectLogic.URL.FolderFromURL();
 			var formatter = new kawaii.twitter.core.SelectLogic.BlobName.Formatter();

@@ -8,6 +8,7 @@ using kawaii.twitter.core.SelectLogic.Images.ExcludeUsed;
 using kawaii.twitter.core.SelectLogic.Images.Find;
 using kawaii.twitter.core.SelectLogic.Page;
 using kawaii.twitter.core.SelectLogic.PageOrExternalImage;
+using kawaii.twitter.core.SelectLogic.SpecialDay;
 using kawaii.twitter.db;
 
 namespace kawaii.twitter.core.SelectLogic

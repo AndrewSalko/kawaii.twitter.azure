@@ -30,26 +30,6 @@ namespace kawaii.twitter.core.TwitterService
 		}
 
 		/// <summary>
-		/// Если вернул true, надо ждать минут 15 до след.вызова любого метода
-		/// </summary>
-		public bool LimitReached
-		{
-			get
-			{
-				//TODO@: реализовать проверку лимитов 
-
-				//var limits = API.Response.RateLimitStatus;
-				//if (limits.RemainingHits <= 2)
-				//{
-				//	//превышен лимит, нужно подождать минут 15
-				//	return true;
-				//}
-
-				return false;
-			}
-		}
-
-		/// <summary>
 		/// Створити (запостити) твіт
 		/// </summary>
 		/// <param name="tweetText">Текст твіта</param>

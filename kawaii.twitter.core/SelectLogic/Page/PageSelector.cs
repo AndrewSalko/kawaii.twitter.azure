@@ -23,19 +23,22 @@ namespace kawaii.twitter.core.SelectLogic.Page
 		IMongoCollection<SitePage> _Pages;
 		IRandomSelector _RandomSelector;
 
-		public PageSelector(IMongoCollection<SitePage> pages, IRandomSelector randomSelector, int maxPagesForRandomSelection)
+		string _SpecialDayName;
+
+		public PageSelector(IMongoCollection<SitePage> pages, IRandomSelector randomSelector, string specialDayName, int maxPagesForRandomSelection)
 		{
 			if (maxPagesForRandomSelection <= 0)
 				throw new ArgumentException("maxPagesForRandomSelection must be greater than zero", nameof(maxPagesForRandomSelection));
 
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
 			_RandomSelector = randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
+			_SpecialDayName = specialDayName;	//может быть null если сегодня не специальный день (Хеллоуин, Рождество)
 			_MaxPagesForRandomSelection = maxPagesForRandomSelection;
 		}
 
 		public async Task<SitePage> GetPageForTwitting()
 		{
-			string currentSpecialDay = null;
+			string currentSpecialDay = _SpecialDayName;
 
 			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
 			long pagesCountLong = await _Pages.CountDocumentsAsync(x => !x.Blocked && x.SpecialDay == currentSpecialDay);

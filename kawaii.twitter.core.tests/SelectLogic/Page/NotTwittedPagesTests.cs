@@ -23,7 +23,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		{
 			try
 			{
-				var pg = new NotTwittedPages(null, new RandomSelector(), _TOP_QUERY_COUNT);
+				var pg = new NotTwittedPages(null, new RandomSelector(), null, _TOP_QUERY_COUNT);
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
@@ -39,7 +39,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		{
 			try
 			{
-				var pg = new NotTwittedPages(new PagesCollectionStub(), null, _TOP_QUERY_COUNT);
+				var pg = new NotTwittedPages(new PagesCollectionStub(), null, null, _TOP_QUERY_COUNT);
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
@@ -55,7 +55,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		{
 			try
 			{
-				var pg = new NotTwittedPages(new PagesCollectionStub(), new RandomSelector(), 0);
+				var pg = new NotTwittedPages(new PagesCollectionStub(), new RandomSelector(), null, 0);
 				Assert.Fail("Очікувалося ArgumentException");
 			}
 			catch (ArgumentException ex)
@@ -69,7 +69,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		[TestCategory("NotTwittedPages")]
 		public void NotTwittedPages_Ctor_Arguments_Normal()
 		{
-			var pg = new NotTwittedPages(new PagesCollectionStub(), new RandomSelector(), _TOP_QUERY_COUNT);
+			var pg = new NotTwittedPages(new PagesCollectionStub(), new RandomSelector(), null, _TOP_QUERY_COUNT);
 		}
 
 		static readonly SitePage _PagePrincessReDive = new SitePage
@@ -212,7 +212,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			//в нашей тест-коллекции есть страницы с null-полем TweetDate.
 			//Их ровно 4 шт, и две заполненные.
 
-			var notTwittedPages = new NotTwittedPages(pages, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedPages = new NotTwittedPages(pages, rndStub, null, _TOP_QUERY_COUNT);
 
 			//случайный селектор работает по 3 страницам, и первая из них - _PagePrincessReDive
 
@@ -238,7 +238,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			//в нашей тест-коллекции есть страницы с null-полем TweetDate.
 			//Их ровно 4 шт, и две заполненные.
 
-			var notTwittedPages = new NotTwittedPages(pages, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedPages = new NotTwittedPages(pages, rndStub, null, _TOP_QUERY_COUNT);
 
 			var resultPage = notTwittedPages.GetPageForTwitting().Result;
 
@@ -262,7 +262,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			//в нашей тест-коллекции есть страницы с null-полем TweetDate.
 			//Их ровно 4 шт, и две заполненные.
 
-			var notTwittedPages = new NotTwittedPages(pages, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedPages = new NotTwittedPages(pages, rndStub, null, _TOP_QUERY_COUNT);
 
 			var resultPage = notTwittedPages.GetPageForTwitting().Result;
 
@@ -286,7 +286,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 			//в нашей тест-коллекции у всех заполнено поле TweetDate.
 			//Ответом будет null
 
-			var notTwittedPages = new NotTwittedPages(pages, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedPages = new NotTwittedPages(pages, rndStub, null, _TOP_QUERY_COUNT);
 
 			var resultPage = notTwittedPages.GetPageForTwitting().Result;
 

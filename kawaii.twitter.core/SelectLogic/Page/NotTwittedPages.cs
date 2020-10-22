@@ -19,10 +19,14 @@ namespace kawaii.twitter.core.SelectLogic.Page
 		int _TopQueryCount;
 		IRandomSelector _RandomSelector;
 
-		public NotTwittedPages(IMongoCollection<SitePage> pages, IRandomSelector randomSelector, int topQueryCount)
+		string _SpecialDayName;
+
+		public NotTwittedPages(IMongoCollection<SitePage> pages, IRandomSelector randomSelector, string specialDayName, int topQueryCount)
 		{
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
 			_RandomSelector=randomSelector ?? throw new ArgumentNullException(nameof(randomSelector));
+
+			_SpecialDayName = specialDayName;	//этот может быть null если сейчас не "особый день"
 
 			if (topQueryCount <= 0)
 				throw new ArgumentException("topQueryCount повинно бути більше ніж 0", nameof(topQueryCount));
@@ -32,8 +36,7 @@ namespace kawaii.twitter.core.SelectLogic.Page
 
 		public async Task<SitePage> GetPageForTwitting()
 		{
-			//TODO@: вычислить ивент-время, и использовать в запросе
-			string currentSpecialDay = null;
+			string currentSpecialDay = _SpecialDayName;
 
 			var pagesNotTwitted = (from page in _Pages.AsQueryable() where (!page.Blocked && page.TweetDate == null && page.SpecialDay == currentSpecialDay) select page).Take(_TopQueryCount);
 

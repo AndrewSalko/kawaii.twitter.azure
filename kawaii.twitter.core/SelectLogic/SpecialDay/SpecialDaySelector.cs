@@ -6,7 +6,7 @@ using kawaii.twitter.Now;
 
 namespace kawaii.twitter.core.SelectLogic.SpecialDay
 {
-	class SpecialDaySelector: ISpecialDaySelector
+	public class SpecialDaySelector: ISpecialDaySelector
 	{
 		readonly IDateSupply _DateSupply;
 		readonly IRandomSelector _RandomSelector;
@@ -20,11 +20,12 @@ namespace kawaii.twitter.core.SelectLogic.SpecialDay
 		string _DetectHalloween(DateTime now)
 		{
 			var halloweenDate = new DateTime(now.Year, 11, 01, 0, 0, 0);    //сам хеллоуин - вечер 31.10, следовательно анализ идет от 1.11
-																			//считаем что период когда можно твитить про Хеллоуин - за день до и день после
+																			//считаем что период когда можно твитить про Хеллоуин - за день до
 			var diff = halloweenDate - now;
 
 			var hoursDiffHalloween = Math.Abs(diff.TotalHours);
-			if (hoursDiffHalloween < 12 && halloweenDate > now)
+			//за 20 часов до наступления Хелловина начинаем случайно выброс постов
+			if (hoursDiffHalloween < 20 && halloweenDate > now)
 			{
 				//для хеллоуина за n часов до полуночи можно начинать выброс постов, за 2 часа один случайно
 				var ind = _RandomSelector.GetRandomIndex(2);
