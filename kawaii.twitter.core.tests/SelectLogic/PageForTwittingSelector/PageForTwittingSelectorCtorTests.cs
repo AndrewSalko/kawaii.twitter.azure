@@ -87,7 +87,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 		public void Ctor_AnimatedSelectorForNewImages_null_Fail()
 		{
 			IPageSelector pageSelectorForNewPages = new Stubs.PageSelectorStub();
-			IFindAnimatedByPage animatedSelectorForNewImages = null;
+			IFindAnimatedByPage findNewAnimatedByPage = null;
 			IPageSelector pageSelectorForAnyPages = new Stubs.PageSelectorStub();
 			IFindAnimatedByPage findAnimatedByPage = new Stubs.FindAnimatedByPageStub();
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
@@ -95,36 +95,12 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 
 			try
 			{
-				var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+				var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, findNewAnimatedByPage, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 				Assert.Fail(_FAIL_MESSAGE_ARGUMENTNULL_EXPECTED);
 			}
 			catch (ArgumentNullException ex)
 			{
-				Assert.IsTrue(ex.ParamName != null && ex.ParamName == "animatedSelectorForNewImages");
-			}
-		}
-
-
-		[TestMethod]
-		[Description("Тест проверки аргументов конструтора")]
-		[TestCategory("PageForTwittingSelector.Конструтор")]
-		public void Ctor_FindPageByBlobName_null_Fail()
-		{
-			IPageSelector pageSelectorForNewPages = new Stubs.PageSelectorStub();
-			IFindAnimatedByPage animatedSelectorForNewImages = new Stubs.AnimatedSelectorStub();
-			IPageSelector pageSelectorForAnyPages = new Stubs.PageSelectorStub();
-			IFindAnimatedByPage findAnimatedByPage = new Stubs.FindAnimatedByPageStub();
-			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
-			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
-
-			try
-			{
-				var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
-				Assert.Fail(_FAIL_MESSAGE_ARGUMENTNULL_EXPECTED);
-			}
-			catch (ArgumentNullException ex)
-			{
-				Assert.IsTrue(ex.ParamName != null && ex.ParamName == "findPageByBlobName");
+				Assert.IsTrue(ex.ParamName != null && ex.ParamName == "findNewAnimatedByPage");
 			}
 		}
 

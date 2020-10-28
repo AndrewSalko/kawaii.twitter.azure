@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 {
-	//[TestClass]
+	[TestClass]
 	public class NotTwittedAnimatedTests
 	{
 		const int _TOP_QUERY_COUNT = 3;
@@ -26,7 +26,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 		{
 			try
 			{
-				//var pg = new NotTwittedAnimated(null, new RandomSelector(), _TOP_QUERY_COUNT);
+				var pg = new NotTwittedAnimated(null, new RandomSelector(), _TOP_QUERY_COUNT, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
@@ -42,7 +42,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 		{
 			try
 			{
-				//var pg = new NotTwittedAnimated(new AnimatedCollectionStub(), null, _TOP_QUERY_COUNT);
+				var pg = new NotTwittedAnimated(new AnimatedCollectionStub(), null, _TOP_QUERY_COUNT, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
@@ -58,7 +58,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 		{
 			try
 			{
-				//var pg = new NotTwittedAnimated(new AnimatedCollectionStub(), new RandomSelector(), 0);
+				var pg = new NotTwittedAnimated(new AnimatedCollectionStub(), new RandomSelector(), 0, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 				Assert.Fail("Очікувалося ArgumentException");
 			}
 			catch (ArgumentException ex)
@@ -72,13 +72,13 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 		[TestCategory("NotTwittedAnimated")]
 		public void NotTwittedAnimated_Ctor_Arguments_Normal()
 		{
-			//var pg = new NotTwittedAnimated(new AnimatedCollectionStub(), new RandomSelector(), _TOP_QUERY_COUNT);
+			var pg = new NotTwittedAnimated(new AnimatedCollectionStub(), new RandomSelector(), _TOP_QUERY_COUNT, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 		}
 
-		static readonly AnimatedImage _Img1 = new AnimatedImage { BlobName = "codegeass:x1.gif" };
+		static readonly AnimatedImage _Img1 = new AnimatedImage { BlobName = "code-geass:x1.gif" };
 		static readonly DateTime _TweetDate1 = new DateTime(2020, 01, 01);
 
-		static readonly AnimatedImage _Img2 = new AnimatedImage { BlobName = "codegeass:x2.gif" };
+		static readonly AnimatedImage _Img2 = new AnimatedImage { BlobName = "code-geass:x2.gif" };
 		static readonly DateTime _TweetDate2 = new DateTime(2020, 01, 02);
 
 		static readonly AnimatedImage _Img3 = new AnimatedImage { BlobName = "shuumatsu-no-izetta:izetta1.gif" };
@@ -154,12 +154,12 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 				Result = 0
 			};
 
-			//var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 
-			//случайный селектор работает по 3 блобам
-			//var resultImg = notTwittedAnimated.GetAnimatedImageForTwitting().Result;
+			string url = "https://kawaii-mobile.com/2017/01/shuumatsu-no-izetta/";
+			var resultImgs = notTwittedAnimated.GetAnimatedImagesForPage(url).Result;
 
-			//Assert.IsNull(resultImg, "Результат повинен бути null");
+			Assert.IsNull(resultImgs, "Результат повинен бути null");
 		}
 
 
@@ -179,13 +179,19 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 			//в нашей тест-коллекции есть страницы с null-полем TweetDate.
 			//Их ровно 4 шт, и две заполненные.
 
-			//var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 
 			//случайный селектор работает по 3 блобам
-			//var resultImg = notTwittedAnimated.GetAnimatedImageForTwitting().Result;
+			string url = "https://kawaii-mobile.com/2011/12/code-geass/";
+			var resultImgs = notTwittedAnimated.GetAnimatedImagesForPage(url).Result;
 
-			//Assert.IsNotNull(resultImg, "Результат не повинен бути null");
-			//Assert.IsTrue(resultImg.BlobName == _Img1.BlobName, "Очікувався результат _Img1.BlobName");
+			Assert.IsNotNull(resultImgs, "Результат не повинен бути null");
+			Assert.IsTrue(resultImgs.Length == 1);
+
+			var resultImg = resultImgs[0];
+			Assert.IsNotNull(resultImg);
+
+			Assert.IsTrue(resultImg.BlobName == _Img1.BlobName, "Очікувався результат _Img1.BlobName");
 		}
 
 		[TestMethod]
@@ -201,18 +207,23 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 				Result = 1  //он будет выдавать индекс 1 для выбора
 			};
 
-			//var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT);
+			var notTwittedAnimated = new NotTwittedAnimated(anim, rndStub, _TOP_QUERY_COUNT, new kawaii.twitter.core.SelectLogic.URL.FolderFromURL(), new kawaii.twitter.core.SelectLogic.BlobName.Formatter());
 
 			//случайный селектор работает по 3 блобам
-			//var resultImg = notTwittedAnimated.GetAnimatedImageForTwitting().Result;
+			string url = "https://kawaii-mobile.com/2011/12/code-geass/";
+			var resultImgs = notTwittedAnimated.GetAnimatedImagesForPage(url).Result;
 
-			//Assert.IsNotNull(resultImg, "Результат не повинен бути null");
-			//Assert.IsTrue(resultImg.BlobName == _Img2.BlobName, "Очікувався результат _Img2.BlobName");
+			Assert.IsNotNull(resultImgs, "Результат не повинен бути null");
+
+			var resultImg = resultImgs[0];
+			Assert.IsNotNull(resultImg);
+
+			Assert.IsTrue(resultImg.BlobName == _Img2.BlobName, "Очікувався результат _Img2.BlobName");
 		}
 
-		[TestMethod]
-		[Description("Тест нормальной работы получения новых страниц, которые ни разу не твитили")]
-		[TestCategory("NotTwittedAnimated")]
+		//[TestMethod]
+		//[Description("Тест нормальной работы получения новых страниц, которые ни разу не твитили")]
+		//[TestCategory("NotTwittedAnimated")]
 		public void NotTwittedAnimated_Normal_Find_Result_Index_2()
 		{
 			var anim = _PrepareAnimatedCollection(false, false);
