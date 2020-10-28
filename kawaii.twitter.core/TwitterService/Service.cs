@@ -15,10 +15,7 @@ namespace kawaii.twitter.core.TwitterService
 	/// </summary>
 	public class Service: IService
 	{
-		const string _MEDIA_CATEGORY_IMAGE = "tweet_image";
-		const string _MEDIA_CATEGORY_GIF = "tweet_gif";
-
-		const string _GIF_EXT = "gif";
+		public const string GIF_EXT = ".gif";
 
 		public const string ENV_API_KEY = "kawaii_twitter_api_key";
 		public const string ENV_API_SECRET = "kawaii_twitter_api_secret";
@@ -59,6 +56,12 @@ namespace kawaii.twitter.core.TwitterService
 			var userClient = new TwitterClient(twitterAPIKey, twitterAPISecret, twitterAccessToken, twitterAccessTokenSecret);
 
 			var uploadTweetImageParameters = new Tweetinvi.Parameters.UploadTweetImageParameters(imageFileBody);
+
+			string ext = Path.GetExtension(imageFileName).ToLower();
+			if (ext == GIF_EXT)
+			{
+				uploadTweetImageParameters.MediaCategory = Tweetinvi.Models.MediaCategory.Gif;
+			}
 
 			var uploadedImage = await userClient.Upload.UploadTweetImageAsync(uploadTweetImageParameters);
 
