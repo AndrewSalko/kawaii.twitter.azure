@@ -112,23 +112,21 @@ namespace kawaii.twitter.azure.func
 			ISpecialDaySelector specialDaySelector = new SpecialDaySelector(dateSupply, randomSelector);
 			string specialDayName = specialDaySelector.DetectSpecialDayName();
 
-			IPageSelector pageSelectorForNewPages = new kawaii.twitter.core.SelectLogic.Page.NotTwittedPages(sitePagesCollection, randomSelector, specialDayName, topQueryCount);
-			IAnimatedSelector animatedSelectorForNewImages = new kawaii.twitter.core.SelectLogic.Images.Newly.NotTwittedAnimated(imagesCollection, randomSelector, topQueryCount);
+			IFolderFromURL folderFromURL = new kawaii.twitter.core.SelectLogic.URL.FolderFromURL();
+			var formatter = new kawaii.twitter.core.SelectLogic.BlobName.Formatter();
 
-			var blobNameToURLPart = new kawaii.twitter.core.SelectLogic.FindPageForBlob.BlobNameToURLPart();
-			IFindPageByBlobName findPageByBlobName=new kawaii.twitter.core.SelectLogic.FindPageForBlob.FindPageByBlobName(sitePagesCollection.AsQueryable(), blobNameToURLPart);
+			IPageSelector pageSelectorForNewPages = new kawaii.twitter.core.SelectLogic.Page.NotTwittedPages(sitePagesCollection, randomSelector, specialDayName, topQueryCount);
+			IFindAnimatedByPage findNewAnimatedByPage = new kawaii.twitter.core.SelectLogic.Images.Newly.NotTwittedAnimated(imagesCollection, randomSelector, topQueryCount, folderFromURL, formatter);
 
 			IPageSelector pageSelectorForAnyPages = new kawaii.twitter.core.SelectLogic.Page.PageSelector(sitePagesCollection, randomSelector, specialDayName, topQueryCount);
 
-			IFolderFromURL folderFromURL = new kawaii.twitter.core.SelectLogic.URL.FolderFromURL();
-			var formatter = new kawaii.twitter.core.SelectLogic.BlobName.Formatter();
 			IFindAnimatedByPage findAnimatedByPage = new kawaii.twitter.core.SelectLogic.Images.Find.FindAnimatedByPage(imagesCollection.AsQueryable(), folderFromURL, formatter);
 
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new kawaii.twitter.core.SelectLogic.PageOrExternalImage.PageOrExternalImageSelector();
 
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new kawaii.twitter.core.SelectLogic.Images.ExcludeUsed.AnimatedSelectorWithExcludeLast();
 
-			IPageForTwittingSelector pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, logger);
+			IPageForTwittingSelector pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, findNewAnimatedByPage, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, logger);
 
 			var tweetCreator = new kawaii.twitter.core.TweetCreator(pageForTwittingSelector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater, logger);
 

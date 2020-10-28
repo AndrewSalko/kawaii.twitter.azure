@@ -45,7 +45,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 
 
 			IPageSelector pageSelectorForNewPages = stubNewPages;
-			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+			IFindAnimatedByPage animatedSelectorForNewImages = animNewStub;
 
 			IFindPageByBlobName findPageByBlobName = new Stubs.FindPageByBlobNameStub();
 
@@ -70,7 +70,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
 
@@ -125,7 +125,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			};
 
 			IPageSelector pageSelectorForNewPages = stubNewPages;
-			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+			IFindAnimatedByPage animatedSelectorForNewImages = animNewStub;
 
 			IFindPageByBlobName findPageByBlobName = new Stubs.FindPageByBlobNameStub();
 
@@ -147,7 +147,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			try
 			{
@@ -192,7 +192,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 
 
 			IPageSelector pageSelectorForNewPages = stubNewPages;
-			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+			IFindAnimatedByPage animatedSelectorForNewImages = animNewStub;
 
 			IFindPageByBlobName findPageByBlobName = new Stubs.FindPageByBlobNameStub();
 
@@ -229,7 +229,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
 

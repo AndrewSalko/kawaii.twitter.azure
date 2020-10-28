@@ -40,14 +40,13 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 
 			IPageSelector pageSelectorForNewPages = stub;
 
-			IAnimatedSelector animatedSelectorForNewImages = new Stubs.AnimatedSelectorStub();
-			IFindPageByBlobName findPageByBlobName = new Stubs.FindPageByBlobNameStub();
+			IFindAnimatedByPage animatedSelectorForNewImages = new Stubs.AnimatedSelectorStub();
 			IPageSelector pageSelectorForAnyPages = new Stubs.PageSelectorStub();
 			IFindAnimatedByPage findAnimatedByPage = new Stubs.FindAnimatedByPageStub();
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
 
@@ -83,10 +82,10 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			var animNewStub = new Stubs.AnimatedSelectorStub
 			{
 				DontThrowNotImpl = true,
-				Result = animatedImage  //стаб вернет этот результат
+				Result = new AnimatedImage[] { animatedImage } //стаб вернет этот результат
 			};
 
-			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+			IFindAnimatedByPage animatedSelectorForNewImages = animNewStub;
 
 			//в этом тесте ожидается работа стаба FindPageByBlobNameStub - он должен "найти" страницу по имени блоба
 			SitePage page = new SitePage
@@ -108,7 +107,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			TwittData result = pageForTwittingSelector.GetPageForTwitting().Result;
 
@@ -150,10 +149,10 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			var animNewStub = new Stubs.AnimatedSelectorStub
 			{
 				DontThrowNotImpl = true,
-				Result = animatedImage  //стаб вернет этот результат
+				Result = new AnimatedImage[] { animatedImage } //стаб вернет этот результат
 			};
 
-			IAnimatedSelector animatedSelectorForNewImages = animNewStub;
+			IFindAnimatedByPage animatedSelectorForNewImages = animNewStub;
 
 			//в этом тесте ожидается работа стаба FindPageByBlobNameStub - он должен НЕ найти страницу по имени блоба (вернуть null)
 			//и это приведет в итоге к исключению
@@ -171,7 +170,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.PageForTwittingSelector
 			IPageOrExternalImageSelector pageOrExternalImageSelector = new Stubs.PageOrExternalImageSelectorStub();
 			IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast = new Stubs.AnimatedSelectorWithExcludeLastStub();
 
-			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, findPageByBlobName, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
+			var pageForTwittingSelector = new kawaii.twitter.core.SelectLogic.PageForTwittingSelector(pageSelectorForNewPages, animatedSelectorForNewImages, pageSelectorForAnyPages, findAnimatedByPage, pageOrExternalImageSelector, animatedSelectorWithExcludeLast, new TweetCreator.Stubs.Logger());
 
 			try
 			{

@@ -32,17 +32,12 @@ namespace kawaii.twitter.core.SelectLogic
 		/// <summary>
 		/// Знайде ті gif-зображення, які ще не твітіли
 		/// </summary>
-		IAnimatedSelector _AnimatedSelectorForNewImages;
+		IFindAnimatedByPage _FindNewAnimatedByPage;
 
 		/// <summary>
 		/// Знаходить усі анім.зображення для вказаного посту (за url)
 		/// </summary>
 		IFindAnimatedByPage _FindAnimatedByPage;
-
-		/// <summary>
-		/// Знайде сторінку за іменем анімованого блоб-зображення (якщо у нас є code-geass:geass.gif, то знайде сам пост)
-		/// </summary>
-		IFindPageByBlobName _FindPageByBlobName;
 
 		/// <summary>
 		/// Определяет использовать ли изображение из поста или внешнее изображение
@@ -56,11 +51,10 @@ namespace kawaii.twitter.core.SelectLogic
 
 		kawaii.twitter.Logs.ILogger _Log;
 
-		public PageForTwittingSelector(IPageSelector pageSelectorForNewPages, IAnimatedSelector animatedSelectorForNewImages, IFindPageByBlobName findPageByBlobName, IPageSelector pageSelectorForAnyPages, IFindAnimatedByPage findAnimatedByPage, IPageOrExternalImageSelector pageOrExternalImageSelector, IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast, kawaii.twitter.Logs.ILogger log)
+		public PageForTwittingSelector(IPageSelector pageSelectorForNewPages, IFindAnimatedByPage findNewAnimatedByPage, IPageSelector pageSelectorForAnyPages, IFindAnimatedByPage findAnimatedByPage, IPageOrExternalImageSelector pageOrExternalImageSelector, IAnimatedSelectorWithExcludeLast animatedSelectorWithExcludeLast, kawaii.twitter.Logs.ILogger log)
 		{
 			_PageSelectorForNewPages = pageSelectorForNewPages ?? throw new ArgumentNullException(nameof(pageSelectorForNewPages));
-			_AnimatedSelectorForNewImages = animatedSelectorForNewImages ?? throw new ArgumentNullException(nameof(animatedSelectorForNewImages));
-			_FindPageByBlobName = findPageByBlobName ?? throw new ArgumentNullException(nameof(findPageByBlobName));
+			_FindNewAnimatedByPage = findNewAnimatedByPage ?? throw new ArgumentNullException(nameof(findNewAnimatedByPage));
 			_PageSelectorForAnyPages = pageSelectorForAnyPages ?? throw new ArgumentNullException(nameof(pageSelectorForAnyPages));
 			_FindAnimatedByPage = findAnimatedByPage ?? throw new ArgumentNullException(nameof(findAnimatedByPage));
 			_PageOrExternalImageSelector = pageOrExternalImageSelector ?? throw new ArgumentNullException(nameof(pageOrExternalImageSelector));
@@ -89,47 +83,42 @@ namespace kawaii.twitter.core.SelectLogic
 				return result;
 			}
 
-			//Если попали сюда значит нет новых страниц, но может есть новые gif-файлы? (которые НИ разу не твитили)
-			//Важно отметить, что новые гиф-изображения по сути приоритетно решают кого твитнем (пусть даже эта страница недавно и проходила)
-			AnimatedImage img = await _AnimatedSelectorForNewImages.GetAnimatedImageForTwitting();
-			if (img != null)
-			{
-				//здесь нам все равно нужно найти страницу, просто изображение будет взято из аним.гифки что нашли
-				SitePage blobPage = await _FindPageByBlobName.Find(img.BlobName);
-				if (blobPage == null)
-				{
-					throw new ApplicationException("Find page by blob name failed for:" + img.BlobName);
-				}
-
-				TwittData result = new TwittData
-				{
-					Page = blobPage,
-					Image = img
-				};
-				return result;
-			}
-
-			//на этом этапе у нас все страницы и все гифки уже твитились
+			//на этом этапе у нас все новые страницы и уже твитились
 			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
 			//Здесь селектор должен быть умен в плане предлагать вначале более "старо-твиченные посты"
 			SitePage pageSelected = await _PageSelectorForAnyPages.GetPageForTwitting();
-
 			if (pageSelected == null)
 			{
 				throw new ApplicationException("No page found for twitting");	//это правда необычно..скорее ошибка т.к. база ведь не пустая
 			}
 
-			//получить связанные с ней аним.изображения, и если они есть, решить - будем показывать аним.изображение или изображение из поста (случайное)
-			//(здесь плохо то, что весь массив imgsForPage в памяти..но пока их не слишком много это не проблема)
-			AnimatedImage[] imgsForPage = await _FindAnimatedByPage.GetAnimatedImagesForPage(pageSelected.URL);
-			if (imgsForPage != null && imgsForPage.Length > 0)
+			//теперь решаем: то ли просто страница , то ли используем аним.изображение (для этой страницы, если конечно они есть)
+			if (_PageOrExternalImageSelector.UseExternalAnimatedImage)
 			{
-				//теперь решаем: то ли просто страница , то ли используем аним.изображение что нашли (для этой страницы)
-				if (_PageOrExternalImageSelector.UseExternalAnimatedImage)
-				{
-					//выбираем случайно аним.гифку, кроме той которую твитили последний раз (если их более чем одна)
-					var animImg = _AnimatedSelectorWithExcludeLast.SelectImage(imgsForPage);
+				//Пробуем использовать аним.изображение, но это ЕСЛИ оно найдется для этой страницы (бывают страницы без них вообще)
 
+				string url = pageSelected.URL;
+				AnimatedImage animImg = null;
+
+				AnimatedImage[] imgsNew = await _FindNewAnimatedByPage.GetAnimatedImagesForPage(url);
+				if (imgsNew != null)
+				{
+					//берем первую что нашли - эти гифки не твитили ни разу (скорее всего она будет одна в результате-ответе)
+					animImg = imgsNew[0];
+				}
+				else
+				{
+					//новых нет, но может есть "не новые" гиф-файлы?
+					AnimatedImage[] imgsForPage = await _FindAnimatedByPage.GetAnimatedImagesForPage(url);
+					if (imgsForPage != null && imgsForPage.Length > 0)
+					{
+						//выбираем случайно аним.гифку, кроме той которую твитили последний раз (если их более чем одна)
+						animImg = _AnimatedSelectorWithExcludeLast.SelectImage(imgsForPage);
+					}
+				}
+
+				if (animImg != null)
+				{
 					TwittData result = new TwittData
 					{
 						Image = animImg,
