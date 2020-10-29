@@ -16,17 +16,39 @@ namespace kawaii.twitter.blob
 	{
 		public const string CONTAINER_NAME = "animated-images";
 
+		object _LockRoot = new object();
+
 		BlobContainerClient _ContainerClient;
+
+		string _ConnectionString;
 
 		public AnimatedImagesBlobContainer(string connectionStringAzureBlob)
 		{
-			BlobServiceClient blobServiceClient = new BlobServiceClient(connectionStringAzureBlob);
-			_ContainerClient = blobServiceClient.GetBlobContainerClient(CONTAINER_NAME);
+			_ConnectionString = string.IsNullOrEmpty(connectionStringAzureBlob) ? throw new ArgumentNullException(nameof(connectionStringAzureBlob)) : connectionStringAzureBlob;
 		}
+
+		BlobContainerClient _Container
+		{
+			get
+			{
+				lock (_LockRoot)
+				{
+					if (_ContainerClient == null)
+					{
+						//підключитися до контейнера
+						BlobServiceClient blobServiceClient = new BlobServiceClient(_ConnectionString);
+						_ContainerClient = blobServiceClient.GetBlobContainerClient(CONTAINER_NAME);
+					}
+
+					return _ContainerClient;
+				}
+			}
+		}
+
 
 		public string[] GetBlobNames()
 		{
-			var blobs = _ContainerClient.GetBlobs();
+			var blobs = _Container.GetBlobs();
 
 			List<string> names = new List<string>();
 
@@ -64,7 +86,7 @@ namespace kawaii.twitter.blob
 
 			//знайдемо блоб - якщо знайдеться, нічого не робимо
 
-			var blobClient = _ContainerClient.GetBlobClient(blobName);
+			var blobClient = _Container.GetBlobClient(blobName);
 			if (blobClient.Exists())
 			{
 				return blobName;
@@ -85,7 +107,7 @@ namespace kawaii.twitter.blob
 			if (string.IsNullOrEmpty(blobName))
 				throw new ArgumentNullException(nameof(blobName));
 
-			var blobClient = _ContainerClient.GetBlobClient(blobName);
+			var blobClient = _Container.GetBlobClient(blobName);
 			if (!blobClient.Exists())
 				throw new ArgumentException($"Blob not found: {blobName}");
 

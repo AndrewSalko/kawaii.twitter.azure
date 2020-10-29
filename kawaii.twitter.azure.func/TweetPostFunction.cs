@@ -38,7 +38,7 @@ namespace kawaii.twitter.azure.func
 			//0 */5 * * * * - каждые 5 мин
 			//"0 0 * * * *"	- каждый час
 
-			log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+			log.LogInformation($"TweetPostFunction executed at: {DateTime.Now}");
 
 			string animatedBlobConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_animatedblob");
 			string azureSiteDBConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_sitepages");
