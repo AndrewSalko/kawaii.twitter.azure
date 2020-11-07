@@ -27,5 +27,10 @@ namespace kawaii.twitter.console
 		{
 			Console.WriteLine(GetFormatted(format, args));
 		}
+
+		public void LogError(string format, params object[] args)
+		{
+			Console.WriteLine(GetFormatted(format, args));
+		}
 	}
 }

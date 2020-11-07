@@ -10,5 +10,9 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate.Stubs
 		public void Log(string format, params object[] args)
 		{
 		}
+
+		public void LogError(string format, params object[] args)
+		{
+		}
 	}
 }

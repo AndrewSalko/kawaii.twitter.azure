@@ -38,28 +38,28 @@ namespace kawaii.twitter.azure.func
 			//0 */5 * * * * - каждые 5 мин
 			//"0 0 * * * *"	- каждый час
 
-			log.LogInformation($"TweetPostFunction executed at: {DateTime.Now}");
+			Logger logger = new Logger(log);
+
+			logger.Log($"TweetPostFunction executed at: {DateTime.Now}");
 
 			string animatedBlobConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_animatedblob");
 			string azureSiteDBConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_sitepages");
 
 			if (string.IsNullOrEmpty(animatedBlobConnectionString))
 			{
-				log.LogError("animatedBlobConnectionString not found!");
+				logger.LogError("animatedBlobConnectionString not found!");
 				return;
 			}
 
 			if (string.IsNullOrEmpty(azureSiteDBConnectionString))
 			{
-				log.LogError("azureSiteDBConnectionString not found!");
+				logger.LogError("azureSiteDBConnectionString not found!");
 				return;
 			}
 
-			Logger logger = new Logger(log);
-
 			IDatabase database = new Database(azureSiteDBConnectionString, true, null);
 
-			log.LogInformation($"database connected: {DateTime.Now}");
+			logger.Log($"database connected: {DateTime.Now}");
 
 			//если в переменных задано что "не обновлять индексы", то мы сэкономим время работы в прод-окружении - индексы создаются один раз,
 			//и дальше и так работают, хотя MongoDB и говорит что "нет проблем".
@@ -74,18 +74,18 @@ namespace kawaii.twitter.azure.func
 
 			if (dontCreateIndexes)
 			{
-				log.LogInformation("Indexes will not updated (found env:kawaii_twitter_dont_create_indexes)");
+				logger.Log("Indexes will not updated (found env:kawaii_twitter_dont_create_indexes)");
 			}
 
 			AnimatedImageCollection animatedImageCollection = new AnimatedImageCollection(database, null, !dontCreateIndexes);
 			var imagesCollection = animatedImageCollection.AnimatedImages;
 
-			log.LogInformation($"imagesCollection init done: {DateTime.Now}");
+			logger.Log($"imagesCollection init done: {DateTime.Now}");
 
 			SitePageCollection sitePageCollection = new SitePageCollection(database, null, !dontCreateIndexes);
 			var sitePagesCollection = sitePageCollection.SitePages;
 
-			log.LogInformation($"sitePagesCollection init done: {DateTime.Now}");
+			logger.Log($"sitePagesCollection init done: {DateTime.Now}");
 
 			ITwitterTextCreator textCreator = new kawaii.twitter.core.Text.TwitterTextCreator();
 			IImageOnWeb imageOnWeb = new kawaii.twitter.core.HtmlParsers.ImageOnWeb(_HttpClient);
@@ -130,7 +130,7 @@ namespace kawaii.twitter.azure.func
 
 			var tweetCreator = new kawaii.twitter.core.TweetCreator(pageForTwittingSelector, textCreator, twitterImageURL, imageOnWeb, blobDownload, service, lastTweetUpdater, logger);
 
-			log.LogInformation($"tweetCreator.Execute: {DateTime.Now}");
+			logger.Log($"tweetCreator.Execute: {DateTime.Now}");
 
 			//выполнить твит заданной страницы и изображения
 			await tweetCreator.Execute();
