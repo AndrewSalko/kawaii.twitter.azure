@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +7,9 @@ namespace kawaii.twitter.core.Text
 {
 	class PostText
 	{
+		public const string DEFAULT_HASHTAGS = "#anime #animewallpaper";
+		public const int MAX_TWEET_TEXT_LEN = 200;
+
 		public PostText(string url, string title)
 		{
 			URL = url;
@@ -39,7 +42,7 @@ namespace kawaii.twitter.core.Text
 
 			complexText += " ";
 			complexText += urlAndTags;
-			if (complexText.Length < 140)
+			if (complexText.Length < MAX_TWEET_TEXT_LEN)
 			{
 				return complexText;
 			}
@@ -47,7 +50,7 @@ namespace kawaii.twitter.core.Text
 			{
 				//проверим, может без хеш-тегов выйдет?
 				string complexText2 = string.Format("{0} {1}", Title, URL);
-				if (complexText2.Length < 140)
+				if (complexText2.Length < MAX_TWEET_TEXT_LEN)
 				{
 					return complexText2;
 				}
@@ -57,6 +60,15 @@ namespace kawaii.twitter.core.Text
 		}
 
 		string _GetRandomHashTags()
+		{
+			return DEFAULT_HASHTAGS;	//можливо це покращить переходи з соц.мереж
+		}
+
+		/// <summary>
+		/// Стара реалізація
+		/// </summary>
+		/// <returns></returns>
+		string _GetRandomHashTagsOld()
 		{
 			string[] animeHashTags = new string[] { "#anime", "#animewallpaper", "#animegirl" };
 			string[] hashTags = new string[] { "#otaku", "#animelover", "#smartphonewallpaper", "#iphone", "#smartphone" };
