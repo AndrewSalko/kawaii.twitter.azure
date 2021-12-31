@@ -38,6 +38,35 @@ namespace kawaii.twitter.core.SelectLogic.SpecialDay
 			return null;
 		}
 
+		string _DetectNewYearAndChristmas(DateTime now, DateTime holiday)
+		{
+			var diff = holiday - now;
+
+			var hoursDiffHalloween = Math.Abs(diff.TotalHours);
+			//за 48 часов до наступления Нов.года начинаем случайно выброс постов
+			if (hoursDiffHalloween < 48 && holiday > now)
+			{
+				var ind = _RandomSelector.GetRandomIndex(2);
+				if (ind == 1)
+				{
+					return kawaii.twitter.db.SpecialDays.CHRISTMAS;
+				}
+			}
+
+			return null;
+		}
+
+		DateTime _GetNewYearDay(DateTime now)
+		{
+			return new DateTime(now.Year, 12, 31, 0, 0, 0);
+		}
+
+		DateTime _GetXmasDay(DateTime now)
+		{
+			return new DateTime(now.Year, 12, 25, 0, 0, 0);
+		}
+
+
 		public string DetectSpecialDayName()
 		{
 			var now = _DateSupply.Now;
@@ -46,7 +75,16 @@ namespace kawaii.twitter.core.SelectLogic.SpecialDay
 			if (halloween != null)
 				return halloween;
 
-			//TODO@: реализовать для Рождества
+			//Новый год
+			string newYearDay = _DetectNewYearAndChristmas(now, _GetNewYearDay(now));
+			if (newYearDay != null)
+				return newYearDay;
+
+			//Рождество
+			string xmasDay = _DetectNewYearAndChristmas(now, _GetXmasDay(now));
+			if (xmasDay != null)
+				return xmasDay;
+
 
 			return null;
 		}
