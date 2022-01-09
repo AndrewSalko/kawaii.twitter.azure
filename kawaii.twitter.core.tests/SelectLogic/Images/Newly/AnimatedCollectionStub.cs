@@ -325,7 +325,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 			throw new NotImplementedException();
 		}
 
-		public Task InsertOneAsync(AnimatedImage document, CancellationToken _cancellationToken)
+		public Task InsertOneAsync(AnimatedImage document, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
