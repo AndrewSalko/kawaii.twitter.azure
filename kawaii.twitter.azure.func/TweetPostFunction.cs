@@ -87,6 +87,12 @@ namespace kawaii.twitter.azure.func
 
 			logger.Log($"sitePagesCollection init done: {DateTime.Now}");
 
+
+			//обновляем (при необходимости) посты из карты сайта
+			UpdateRecentPosts recentPostsUpdater = new UpdateRecentPosts();
+			await recentPostsUpdater.UpdateFromSiteMap(_HttpClient, logger, database, dontCreateIndexes, UpdateRecentPosts.RECENT_POSTS_COUNT);
+
+
 			ITwitterTextCreator textCreator = new kawaii.twitter.core.Text.TwitterTextCreator();
 			IImageOnWeb imageOnWeb = new kawaii.twitter.core.HtmlParsers.ImageOnWeb(_HttpClient);
 			ITwitterImageURL twitterImageURL = new kawaii.twitter.core.HtmlParsers.TwitterImageURL(_HttpClient);
