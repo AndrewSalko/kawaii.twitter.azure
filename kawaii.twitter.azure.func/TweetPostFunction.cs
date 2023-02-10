@@ -90,7 +90,10 @@ namespace kawaii.twitter.azure.func
 
 			//обновляем (при необходимости) посты из карты сайта
 			UpdateRecentPosts recentPostsUpdater = new UpdateRecentPosts();
-			await recentPostsUpdater.UpdateFromSiteMap(_HttpClient, logger, database, dontCreateIndexes, UpdateRecentPosts.RECENT_POSTS_COUNT);
+			if (recentPostsUpdater.UpdateTimeReached)
+			{
+				await recentPostsUpdater.UpdateFromSiteMap(_HttpClient, logger, database, dontCreateIndexes, UpdateRecentPosts.RECENT_POSTS_COUNT);
+			}
 
 
 			ITwitterTextCreator textCreator = new kawaii.twitter.core.Text.TwitterTextCreator();

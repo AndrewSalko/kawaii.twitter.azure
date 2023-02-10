@@ -117,6 +117,21 @@ namespace kawaii.twitter.azure.func
 			var updateResult = configCollection.UpdateOne(filter, update);
 		}
 
+		public bool UpdateTimeReached
+		{
+			get
+			{
+				//Щоб кожного часу не "перезапитувати" оновлення, ми будемо це робити 2 рази на добу
+				int hour = DateTime.Now.Hour;
+
+				if (hour == 1 || hour == 13)
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
 
 	}
 }
