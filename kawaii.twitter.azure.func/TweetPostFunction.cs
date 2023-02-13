@@ -92,7 +92,11 @@ namespace kawaii.twitter.azure.func
 			UpdateRecentPosts recentPostsUpdater = new UpdateRecentPosts();
 			if (recentPostsUpdater.UpdateTimeReached)
 			{
+				logger.Log($"UpdateFromSiteMap: {DateTime.Now}");
+
 				await recentPostsUpdater.UpdateFromSiteMap(_HttpClient, logger, database, dontCreateIndexes, UpdateRecentPosts.RECENT_POSTS_COUNT);
+
+				logger.Log($"UpdateFromSiteMap done: {DateTime.Now}");
 			}
 
 
