@@ -42,34 +42,34 @@ namespace kawaii.twitter.azure.func
 				return;
 			}
 
-			//нас волнует дата модификации, ее надо сверить с записанной в базе - если post.xml обновлялся, значит
-			//нужно запустить процедуру "обновить недавние посты"
-			var configCollection = new kawaii.twitter.db.ConfigurationCollection(database, null, !dontCreateIndexes);
-			var configs = configCollection.Configurations;
+			////нас волнует дата модификации, ее надо сверить с записанной в базе - если post.xml обновлялся, значит
+			////нужно запустить процедуру "обновить недавние посты"
+			//var configCollection = new kawaii.twitter.db.ConfigurationCollection(database, null, !dontCreateIndexes);
+			//var configs = configCollection.Configurations;
 
-			//ищем основную конфигурацию (такой документ будет один)
+			////ищем основную конфигурацию (такой документ будет один)
 
-			var findResult = await configs.FindAsync(x => x.UniqueName == Configuration.MAIN_CONFIG_UNIQUE_NAME);
-			var cfg = findResult.FirstOrDefault();
-			if (cfg == null)
-			{
-				//видимо это первый раз - создаем конфиг...
-				cfg = new Configuration
-				{
-					UniqueName = Configuration.MAIN_CONFIG_UNIQUE_NAME
-				};
+			//var findResult = await configs.FindAsync(x => x.UniqueName == Configuration.MAIN_CONFIG_UNIQUE_NAME);
+			//var cfg = findResult.FirstOrDefault();
+			//if (cfg == null)
+			//{
+			//	//видимо это первый раз - создаем конфиг...
+			//	cfg = new Configuration
+			//	{
+			//		UniqueName = Configuration.MAIN_CONFIG_UNIQUE_NAME
+			//	};
 
-				await configs.InsertOneAsync(cfg);
-			}
+			//	await configs.InsertOneAsync(cfg);
+			//}
 
-			//проверим дату обновления...
-			DateTime lastUpd = cfg.PostXMLSiteMapLastModified.GetValueOrDefault();
+			////проверим дату обновления...
+			//DateTime lastUpd = cfg.PostXMLSiteMapLastModified.GetValueOrDefault();
 
-			if (postXML.LastModified <= lastUpd)
-			{
-				logger.Log("UpdateFromSiteMap: no update, exiting");
-				return;	//апдейт не требуется
-			}
+			//if (postXML.LastModified <= lastUpd)
+			//{
+			//	logger.Log("UpdateFromSiteMap: no update, exiting");
+			//	return;	//апдейт не требуется
+			//}
 
 			//делаем вычитку N последних постов из post.xml, и обновляем базу
 
@@ -90,32 +90,32 @@ namespace kawaii.twitter.azure.func
 			await databaseFromSitemapUpdater.UpdateFromSitemap(SITEMAP_POSTS_URL, loader, logger);
 
 			//и запишем дату в базу...
-			_UpdatePostXMLModificationDateInDB(cfg.UniqueName, postXML.LastModified, configs);
+			//_UpdatePostXMLModificationDateInDB(cfg.UniqueName, postXML.LastModified, configs);
 		}
 
 
-		/// <summary>
-		/// Записати дату оновлення post.xml у базу 
-		/// </summary>
-		/// <param name="uniqName"></param>
-		/// <param name="postXMLLastModified"></param>
-		/// <param name="configCollection"></param>
-		void _UpdatePostXMLModificationDateInDB(string uniqName, DateTime postXMLLastModified, IMongoCollection<Configuration> configCollection)
-		{
-			if (string.IsNullOrEmpty(uniqName))
-				throw new ArgumentNullException(nameof(uniqName));
+		///// <summary>
+		///// Записати дату оновлення post.xml у базу 
+		///// </summary>
+		///// <param name="uniqName"></param>
+		///// <param name="postXMLLastModified"></param>
+		///// <param name="configCollection"></param>
+		//void _UpdatePostXMLModificationDateInDB(string uniqName, DateTime postXMLLastModified, IMongoCollection<Configuration> configCollection)
+		//{
+		//	if (string.IsNullOrEmpty(uniqName))
+		//		throw new ArgumentNullException(nameof(uniqName));
 
-			if (postXMLLastModified == DateTime.MinValue)
-				throw new ArgumentException(nameof(postXMLLastModified), nameof(postXMLLastModified));
+		//	if (postXMLLastModified == DateTime.MinValue)
+		//		throw new ArgumentException(nameof(postXMLLastModified), nameof(postXMLLastModified));
 
-			if (configCollection == null)
-				throw new ArgumentNullException(nameof(configCollection));
+		//	if (configCollection == null)
+		//		throw new ArgumentNullException(nameof(configCollection));
 
-			var filter = Builders<Configuration>.Filter.Eq(x => x.UniqueName, uniqName);
-			var update = Builders<Configuration>.Update.Set(x => x.PostXMLSiteMapLastModified, postXMLLastModified);
+		//	var filter = Builders<Configuration>.Filter.Eq(x => x.UniqueName, uniqName);
+		//	var update = Builders<Configuration>.Update.Set(x => x.PostXMLSiteMapLastModified, postXMLLastModified);
 
-			var updateResult = configCollection.UpdateOne(filter, update);
-		}
+		//	var updateResult = configCollection.UpdateOne(filter, update);
+		//}
 
 		public bool UpdateTimeReached
 		{
