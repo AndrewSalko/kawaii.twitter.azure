@@ -7,6 +7,6 @@ namespace kawaii.twitter.core.SiteMap
 {
 	public interface IPostBodyLoader
 	{
-		Task<string> GetHtmlBodyForURL(string url);
+		Task<PostInfo> GetHtmlBodyForURL(string url);
 	}
 }

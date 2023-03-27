@@ -16,12 +16,10 @@ namespace kawaii.twitter.core.SiteMap
 	public class XMLSiteMapLoader: IXMLSiteMapLoader
 	{
 		ISiteMapWebDownloader _SiteMapWebDownloader;
-		IPostBodyLoader _PostBodyLoader;
 
-		public XMLSiteMapLoader(ISiteMapWebDownloader siteMapWebDownloader, IPostBodyLoader postBodyLoader)
+		public XMLSiteMapLoader(ISiteMapWebDownloader siteMapWebDownloader)
 		{
 			_SiteMapWebDownloader = siteMapWebDownloader ?? throw new ArgumentNullException(nameof(siteMapWebDownloader));
-			_PostBodyLoader = postBodyLoader ?? throw new ArgumentNullException(nameof(postBodyLoader));
 		}
 
 		public async Task<URLInfo[]> Load(string xmlSiteMapURL)
@@ -69,15 +67,7 @@ namespace kawaii.twitter.core.SiteMap
 					if (page.URL == null || page.LastModified == DateTime.MinValue)
 						continue;
 
-					//получить тайтл
-					string title = await _GetTitle(page.URL);
-					if (title != null)
-					{
-						page.Title = title;
-					}
-
 					result.Add(page);
-					
 
 					//если лимит равен 0, то условие не выполнится никогда и цикл идет целиком
 					if (i + 1 == LimitCount)
@@ -96,35 +86,5 @@ namespace kawaii.twitter.core.SiteMap
 			get;
 			set;
 		}
-
-		async Task<string> _GetTitle(string url)
-		{
-			string result = null;
-			try
-			{
-				string htmlBody = await _PostBodyLoader.GetHtmlBodyForURL(url);
-
-				Match m = Regex.Match(htmlBody, @"<title>(.*?)</title>");
-				if (m.Success)
-				{
-					result = m.Groups[1].Value;
-				}
-
-				if (result == null)
-				{
-					Match m2 = Regex.Match(htmlBody, @"<TITLE>(.*?)</TITLE>");
-					if (m2.Success)
-					{
-						result = m2.Groups[1].Value;
-					}
-				}
-
-			}
-			catch (Exception)
-			{
-			}
-			return result;
-		}
-
 	}
 }

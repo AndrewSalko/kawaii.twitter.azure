@@ -22,7 +22,7 @@ namespace kawaii.twitter.core
 			_SitePages = sitePages ?? throw new ArgumentNullException(nameof(sitePages));
 		}
 
-		public async Task UpdateFromSitemap(string postSiteMapURL, IXMLSiteMapLoader siteMapLoader, ILogger log)
+		public async Task UpdateFromSitemap(string postSiteMapURL, IXMLSiteMapLoader siteMapLoader, IPostBodyLoader bodyLoader, ILogger log)
 		{
 			//Здесь мы не даем лимиты, по идее каждый раз сканировать всю карту сайта не нужно, а лишь последние 10 постов
 
@@ -45,10 +45,12 @@ namespace kawaii.twitter.core
 				if (foundRecord != null)
 					continue;
 
+				var postBody = await bodyLoader.GetHtmlBodyForURL(url);
+
 				SitePage sitePage = new SitePage
 				{
 					LastModified = urlInfo.LastModified,
-					Title = urlInfo.Title,
+					Title = postBody.Title,
 					URL = url,
 					SpecialDay = SpecialDays.DetectSpecialDay(url)
 				};

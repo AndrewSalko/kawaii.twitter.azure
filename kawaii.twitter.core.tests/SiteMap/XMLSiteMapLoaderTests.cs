@@ -57,28 +57,12 @@ namespace kawaii.twitter.core.tests.SiteMap
 		{
 			try
 			{
-				var loader = new XMLSiteMapLoader(null, new Stubs.PostBodyLoaderStub());
+				var loader = new XMLSiteMapLoader(null);
 				Assert.Fail("Очікувалося ArgumentNullException");
 			}
 			catch (ArgumentNullException ex)
 			{
 				Assert.IsTrue(ex.ParamName == "siteMapWebDownloader");
-			}
-		}
-
-		[TestMethod]
-		[Description("Аргумент siteMapDownloader==null - выброс исключения")]
-		[TestCategory("XMLSiteMapLoader")]
-		public void XMLSiteMapLoader_PostBodyLoader_Null_Exception()
-		{
-			try
-			{
-				var loader = new XMLSiteMapLoader(new Stubs.SiteMapWebDownloaderStub(), null);
-				Assert.Fail("Очікувалося ArgumentNullException");
-			}
-			catch (ArgumentNullException ex)
-			{
-				Assert.IsTrue(ex.ParamName == "postBodyLoader");
 			}
 		}
 
@@ -119,9 +103,10 @@ namespace kawaii.twitter.core.tests.SiteMap
 			{
 				DontThrowException = true
 			};
-			postBodyDown.URLToBody[_URL_1] = upperCaseHTMLBodyForPosts ? _URL_1_BODY_UPPER : _URL_1_BODY;
-			postBodyDown.URLToBody[_URL_2] = upperCaseHTMLBodyForPosts ? _URL_2_BODY_UPPER : _URL_2_BODY;
-			postBodyDown.URLToBody[_URL_3] = upperCaseHTMLBodyForPosts ? _URL_3_BODY_UPPER : _URL_3_BODY;
+
+			postBodyDown.URLToBody[_URL_1] = new PostInfo(upperCaseHTMLBodyForPosts ? _URL_1_BODY_UPPER : _URL_1_BODY);
+			postBodyDown.URLToBody[_URL_2] = new PostInfo(upperCaseHTMLBodyForPosts ? _URL_2_BODY_UPPER : _URL_2_BODY);
+			postBodyDown.URLToBody[_URL_3] = new PostInfo(upperCaseHTMLBodyForPosts ? _URL_3_BODY_UPPER : _URL_3_BODY);
 
 			Dictionary<string, string> urlToTitle = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
 			{
@@ -130,7 +115,7 @@ namespace kawaii.twitter.core.tests.SiteMap
 				[_URL_3] = _URL_3_TITLE
 			};
 
-			var loader = new XMLSiteMapLoader(siteMapDown, postBodyDown);
+			var loader = new XMLSiteMapLoader(siteMapDown);
 			var postInfos = loader.Load(_SITEMAP_POSTS_URL).Result;
 
 			Assert.IsNotNull(postInfos);
@@ -143,9 +128,11 @@ namespace kawaii.twitter.core.tests.SiteMap
 
 				Assert.IsTrue(pi.LastModified != DateTime.MinValue);
 				Assert.IsFalse(string.IsNullOrEmpty(pi.URL));
-				Assert.IsFalse(string.IsNullOrEmpty(pi.Title));
 
-				Assert.IsTrue(pi.Title == urlToTitle[pi.URL]);
+				//TODO@: пересмотреть этот тест в вопросе получения title
+
+				//Assert.IsFalse(string.IsNullOrEmpty(pi.Title));
+				//Assert.IsTrue(pi.Title == urlToTitle[pi.URL]);
 			}
 		}
 

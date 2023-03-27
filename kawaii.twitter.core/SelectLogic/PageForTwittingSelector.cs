@@ -83,8 +83,6 @@ namespace kawaii.twitter.core.SelectLogic
 				return result;
 			}
 
-			await Task.Delay(1100);
-
 			//на этом этапе у нас все новые страницы и уже твитились
 			//В этом случае начинает работать схема - "выбрать только пост, а потом уточнить если есть у него гифки, то случайно решить то ли изображение из поста, то ли гифка"
 			//Здесь селектор должен быть умен в плане предлагать вначале более "старо-твиченные посты"
@@ -93,8 +91,6 @@ namespace kawaii.twitter.core.SelectLogic
 			{
 				throw new ApplicationException("No page found for twitting");	//это правда необычно..скорее ошибка т.к. база ведь не пустая
 			}
-
-			await Task.Delay(1100);
 
 			//теперь решаем: то ли просто страница , то ли используем аним.изображение (для этой страницы, если конечно они есть)
 			if (_PageOrExternalImageSelector.UseExternalAnimatedImage)
@@ -112,8 +108,6 @@ namespace kawaii.twitter.core.SelectLogic
 				}
 				else
 				{
-					await Task.Delay(500);
-
 					//новых нет, но может есть "не новые" гиф-файлы?
 					AnimatedImage[] imgsForPage = await _FindAnimatedByPage.GetAnimatedImagesForPage(url);
 					if (imgsForPage != null && imgsForPage.Length > 0)

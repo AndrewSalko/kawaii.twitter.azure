@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using kawaii.twitter.core.SiteMap;
 using kawaii.twitter.db;
 using MongoDB.Driver;
 
@@ -35,9 +36,22 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			};
 
 			var logger = new Stubs.LoggerStub();
+			var bodyLoader = new SiteMap.Stubs.PostBodyLoaderStub();
+			for (int i = 0; i < SamplePostsDatabase.PostURLs.Length; i++)
+			{
+				var title = SamplePostsDatabase.PostTitles[i];
+				var urlInfo = SamplePostsDatabase.PostURLs[i];
+
+				var postInfo = new PostInfo();
+				postInfo.Title = title;
+				postInfo.HtmlBody = string.Empty;
+
+				bodyLoader.URLToBody[urlInfo.URL] = new PostInfo();
+			}
+
 
 			DatabaseFromSitemapUpdater dbUpd = new DatabaseFromSitemapUpdater(sitePages);
-			dbUpd.UpdateFromSitemap(SITEMAP_URL, loader, logger).Wait();
+			dbUpd.UpdateFromSitemap(SITEMAP_URL, loader, bodyLoader, logger).Wait();
 
 			return sitePages;
 		}

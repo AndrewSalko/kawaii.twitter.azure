@@ -17,12 +17,5 @@ namespace kawaii.twitter.core.SiteMap
 			get;
 			set;
 		}
-
-		public string Title
-		{
-			get;
-			set;
-		}
-
 	}
 }

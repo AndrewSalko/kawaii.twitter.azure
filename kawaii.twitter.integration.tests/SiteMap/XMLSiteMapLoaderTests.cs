@@ -22,10 +22,9 @@ namespace kawaii.twitter.integration.tests.SiteMap
 		{
 			HttpClient client = new HttpClient();
 
-			kawaii.twitter.core.SiteMap.PostBodyLoader postBodyLoader = new PostBodyLoader(client);
 			kawaii.twitter.core.SiteMap.SiteMapWebDownloader siteMapWebDownloader = new SiteMapWebDownloader(client);
 
-			var loader = new XMLSiteMapLoader(siteMapWebDownloader, postBodyLoader);
+			var loader = new XMLSiteMapLoader(siteMapWebDownloader);
 			var postInfos = loader.Load(_SITEMAP_POSTS_URL).Result;
 
 			//в реальной карте сайта что-то должно быть - можем проверить наполнение

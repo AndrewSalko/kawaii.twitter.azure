@@ -11,7 +11,7 @@ namespace kawaii.twitter.core.tests.SiteMap.Stubs
 		/// <summary>
 		/// Заполните набор url => тело html
 		/// </summary>
-		public Dictionary<string, string> URLToBody = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+		public Dictionary<string, PostInfo> URLToBody = new Dictionary<string, PostInfo>(StringComparer.CurrentCultureIgnoreCase);
 
 		public bool DontThrowException
 		{
@@ -19,19 +19,19 @@ namespace kawaii.twitter.core.tests.SiteMap.Stubs
 			set;
 		}
 
-		public async Task<string> GetHtmlBodyForURL(string url)
+		public async Task<PostInfo> GetHtmlBodyForURL(string url)
 		{
 			if (!DontThrowException)
 				throw new NotImplementedException();
 
-			Task<string> task = new Task<string>(() =>
+			Task<PostInfo> task = new Task<PostInfo>(() =>
 			{
 				return URLToBody[url];
 			});
 
 			task.Start();
 
-			string result = await task;
+			var result = await task;
 			return result;
 		}
 	}

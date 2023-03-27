@@ -8,6 +8,18 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 {
 	public class SamplePostsDatabase
 	{
+		/// <summary>
+		/// Тайтлы (соотв массиву PostURLs)
+		/// </summary>
+		public static readonly string[] PostTitles =
+		{
+			"Speed Grapher",				//0
+			"Princess Connect! Re:Dive",	//1
+			"KissXsis",						//2
+			"Isuca",						//3
+			"Uchuu no Stellvia"				//4
+		};
+
 
 		/// <summary>
 		/// Тест-урлы сайта
@@ -18,7 +30,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			new URLInfo()
 			{
 				 LastModified=new DateTime(2020,08,02,10,11,47),
-				 Title="Speed Grapher",
+				 //Title="Speed Grapher",
 				 URL="https://kawaii-mobile.com/2020/08/speed-grapher/"
 			},
 
@@ -26,7 +38,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			new URLInfo()
 			{
 				 LastModified=new DateTime(2020,09,05,17,29,20),
-				 Title="Princess Connect! Re:Dive",
+				 //Title="Princess Connect! Re:Dive",
 				 URL="https://kawaii-mobile.com/2020/08/princess-connect-redive/"
 			},
 
@@ -34,7 +46,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			new URLInfo()
 			{
 				 LastModified=new DateTime(2020,09,05,17,29,20),
-				 Title="KissXsis",
+				 //Title="KissXsis",
 				 URL="https://kawaii-mobile.com/2020/09/kissxsis/"
 			},
 
@@ -42,7 +54,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			new URLInfo()
 			{
 				 LastModified=new DateTime(2020,09,13,10,49,03),
-				 Title="Isuca",
+				 //Title="Isuca",
 				 URL="https://kawaii-mobile.com/2020/09/isuca/"
 			},
 
@@ -50,7 +62,7 @@ namespace kawaii.twitter.core.tests.DatabaseFromSiteMapUpdate
 			new URLInfo()
 			{
 				 LastModified=new DateTime(2020,10,03,22,15,0),
-				 Title="Uchuu no Stellvia",
+				 //Title="Uchuu no Stellvia",
 				 URL="https://kawaii-mobile.com/2020/10/uchuu-no-stellvia/"
 			},
 		};

@@ -144,7 +144,7 @@ namespace kawaii.twitter.console
 			ISiteMapWebDownloader siteMapWebDownloader = new SiteMapWebDownloader(_HttpClient);
 			IPostBodyLoader postBodyLoader = new PostBodyLoader(_HttpClient);
 
-			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(siteMapWebDownloader, postBodyLoader)
+			kawaii.twitter.core.SiteMap.XMLSiteMapLoader loader = new kawaii.twitter.core.SiteMap.XMLSiteMapLoader(siteMapWebDownloader)
 			{
 				//якщо потрібно оновити лише "найновіші пости", наприклад 10 останніх - передати більше 0. Якщо 0 - то оновити усі
 				LimitCount = limitUpdateCount
@@ -152,7 +152,7 @@ namespace kawaii.twitter.console
 
 			ConsoleLogger logger = new ConsoleLogger();
 
-			await databaseFromSitemapUpdater.UpdateFromSitemap(_SITEMAP_POSTS_URL, loader, logger);
+			await databaseFromSitemapUpdater.UpdateFromSitemap(_SITEMAP_POSTS_URL, loader, postBodyLoader, logger);
 		}
 
 		/// <summary>
