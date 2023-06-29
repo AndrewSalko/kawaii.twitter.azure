@@ -5,8 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tweetinvi;
-using Tweetinvi.Logic.QueryParameters;
+using LinqToTwitter;
+using LinqToTwitter.OAuth;
 
 namespace kawaii.twitter.core.TwitterService
 {
@@ -53,33 +53,40 @@ namespace kawaii.twitter.core.TwitterService
 			if (string.IsNullOrEmpty(twitterAccessTokenSecret))
 				throw new KeyNotFoundException(ENV_API_TOKEN_SECRET);
 
-			var userClient = new TwitterClient(twitterAPIKey, twitterAPISecret, twitterAccessToken, twitterAccessTokenSecret);
+			var creds = new LinqToTwitter.OAuth.InMemoryCredentialStore
+			{
+				ConsumerKey = twitterAPIKey,
+				ConsumerSecret = twitterAPISecret,
+				OAuthToken = twitterAccessToken,
+				OAuthTokenSecret = twitterAccessTokenSecret,
+				ScreenName = "KawaiiMobile",
+				UserID = 332240748   //ScreenName, UserID можливо не знадобиться
+			};
 
-			var uploadTweetImageParameters = new Tweetinvi.Parameters.UploadTweetImageParameters(imageFileBody);
+			var auth = new PinAuthorizer();
+			auth.CredentialStore= creds;
 
+			await auth.AuthorizeAsync();
+
+			var twitterCtx = new TwitterContext(auth);
+
+			string mediaCategoryImage = "tweet_image";
+			string mediaType = "image/jpg";
 			string ext = Path.GetExtension(imageFileName).ToLower();
 			if (ext == GIF_EXT)
 			{
-				uploadTweetImageParameters.MediaCategory = Tweetinvi.Models.MediaCategory.Gif;
+				mediaType = "image/gif";
 			}
 
-			var uploadedImage = await userClient.Upload.UploadTweetImageAsync(uploadTweetImageParameters);
+			var mediaImg = await twitterCtx.UploadMediaAsync(imageFileBody, mediaType, mediaCategoryImage);
+			if (mediaImg == null)
+				throw new ApplicationException("mediaImg == null");
 
-			//TODO@: рассмотреть вопрос Alt-текста для изображения
-			//await userClient.Upload.AddMediaMetadataAsync(new MediaMetadata(uploadedImage)
-			//{
-			//	AltText = "Chaos;Head Rimi Sakihata Nanami Nishijo"
-			//});
+			string[] medias = new string[] { mediaImg.MediaID.ToString() };
 
-			if (uploadedImage.Id == null)
-				throw new ApplicationException("uploadedImage.Id == null");
-
-			long mediaID = uploadedImage.Id.Value;
-
-			var publishTweetParameters = new Tweetinvi.Parameters.PublishTweetParameters(tweetText);
-			publishTweetParameters.MediaIds.Add(mediaID);
-
-			await userClient.Tweets.PublishTweetAsync(publishTweetParameters);
+			var tw = await twitterCtx.TweetMediaAsync(tweetText, medias);
+			if (tw == null)
+				throw new ApplicationException("tw == null");
 		}
 	}
 }
