@@ -32,11 +32,12 @@ namespace kawaii.twitter.azure.func
 		static HttpClient _HttpClient = new HttpClient();
 
 		[FunctionName("TweetPostFunction")]
-		public static async Task Run([TimerTrigger("0 0 * * * *")] TimerInfo timer, ILogger log)
+		public static async Task Run([TimerTrigger("0 0 */2 * * *")] TimerInfo timer, ILogger log)
 		{
 			//https://docs.microsoft.com/ru-ru/azure/azure-functions/functions-bindings-timer?tabs=csharp#ncrontab-expressions
 			//0 */5 * * * * - каждые 5 мин
 			//"0 0 * * * *"	- каждый час
+			//0 0 */2 * * * - каждый второй час
 
 			Logger logger = new Logger(log);
 
