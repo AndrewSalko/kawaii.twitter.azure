@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using MongoDB.Driver;
 using kawaii.twitter.db;
 using MongoDB.Bson.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using MongoDB.Driver.Search;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Page
 {
@@ -24,6 +26,8 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		public IMongoIndexManager<SitePage> Indexes => throw new NotImplementedException();
 
 		public MongoCollectionSettings Settings => throw new NotImplementedException();
+
+		public IMongoSearchIndexManager SearchIndexes => throw new NotImplementedException();
 
 		public IAsyncCursor<TResult> Aggregate<TResult>(PipelineDefinition<SitePage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
 		{
@@ -201,6 +205,26 @@ namespace kawaii.twitter.core.tests.SelectLogic.Page
 		}
 
 		public Task<IAsyncCursor<TField>> DistinctAsync<TField>(IClientSessionHandle session, FieldDefinition<SitePage, TField> field, FilterDefinition<SitePage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IAsyncCursor<TItem> DistinctMany<TItem>(FieldDefinition<SitePage, IEnumerable<TItem>> field, FilterDefinition<SitePage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IAsyncCursor<TItem> DistinctMany<TItem>(IClientSessionHandle session, FieldDefinition<SitePage, IEnumerable<TItem>> field, FilterDefinition<SitePage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IAsyncCursor<TItem>> DistinctManyAsync<TItem>(FieldDefinition<SitePage, IEnumerable<TItem>> field, FilterDefinition<SitePage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IAsyncCursor<TItem>> DistinctManyAsync<TItem>(IClientSessionHandle session, FieldDefinition<SitePage, IEnumerable<TItem>> field, FilterDefinition<SitePage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
 		{
 			throw new NotImplementedException();
 		}

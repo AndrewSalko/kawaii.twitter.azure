@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using kawaii.twitter.db;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using MongoDB.Driver.Search;
 
 namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 {
@@ -24,6 +26,8 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 		public IMongoIndexManager<AnimatedImage> Indexes => throw new NotImplementedException();
 
 		public MongoCollectionSettings Settings => throw new NotImplementedException();
+
+		public IMongoSearchIndexManager SearchIndexes => throw new NotImplementedException();
 
 		public IAsyncCursor<TResult> Aggregate<TResult>(PipelineDefinition<AnimatedImage, TResult> pipeline, AggregateOptions options = null, CancellationToken cancellationToken = default)
 		{
@@ -201,6 +205,26 @@ namespace kawaii.twitter.core.tests.SelectLogic.Images.Newly
 		}
 
 		public Task<IAsyncCursor<TField>> DistinctAsync<TField>(IClientSessionHandle session, FieldDefinition<AnimatedImage, TField> field, FilterDefinition<AnimatedImage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IAsyncCursor<TItem> DistinctMany<TItem>(FieldDefinition<AnimatedImage, IEnumerable<TItem>> field, FilterDefinition<AnimatedImage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IAsyncCursor<TItem> DistinctMany<TItem>(IClientSessionHandle session, FieldDefinition<AnimatedImage, IEnumerable<TItem>> field, FilterDefinition<AnimatedImage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IAsyncCursor<TItem>> DistinctManyAsync<TItem>(FieldDefinition<AnimatedImage, IEnumerable<TItem>> field, FilterDefinition<AnimatedImage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<IAsyncCursor<TItem>> DistinctManyAsync<TItem>(IClientSessionHandle session, FieldDefinition<AnimatedImage, IEnumerable<TItem>> field, FilterDefinition<AnimatedImage> filter, DistinctOptions options = null, CancellationToken cancellationToken = default)
 		{
 			throw new NotImplementedException();
 		}

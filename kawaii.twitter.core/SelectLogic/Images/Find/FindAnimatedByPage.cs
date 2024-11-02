@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.core.SelectLogic.Randomize;
@@ -16,11 +17,11 @@ namespace kawaii.twitter.core.SelectLogic.Images.Find
 	/// </summary>
 	public class FindAnimatedByPage: IFindAnimatedByPage
 	{
-		IMongoQueryable<AnimatedImage> _AnimatedImages;
+		IQueryable<AnimatedImage> _AnimatedImages;
 		IFolderFromURL _FolderFromURL;
 		BlobName.IFormatter _Formatter;
 
-		public FindAnimatedByPage(IMongoQueryable<AnimatedImage> animatedImages, IFolderFromURL folderFromURL, BlobName.IFormatter formatter)
+		public FindAnimatedByPage(IQueryable<AnimatedImage> animatedImages, IFolderFromURL folderFromURL, BlobName.IFormatter formatter)
 		{
 			_AnimatedImages = animatedImages ?? throw new ArgumentNullException(nameof(animatedImages));
 

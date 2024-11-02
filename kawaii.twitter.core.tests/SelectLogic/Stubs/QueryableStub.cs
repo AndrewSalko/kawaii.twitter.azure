@@ -16,7 +16,7 @@ namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 	/// Этот стаб годится только для минимальных проверок на null, работать он не может
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	class QueryableStub<T>: IMongoQueryable<T>
+	class QueryableStub<T>: IQueryable<T>
 	{
 		public List<T> ResultData
 		{
@@ -33,8 +33,6 @@ namespace kawaii.twitter.core.tests.SelectLogic.Stubs
 		public IEnumerator<T> GetEnumerator() => ResultData.AsQueryable().GetEnumerator();
 
 		IEnumerator IEnumerable.GetEnumerator() => ResultData.AsQueryable().GetEnumerator();
-
-		public QueryableExecutionModel GetExecutionModel() => throw new NotImplementedException();
 
 		public IAsyncCursor<T> ToCursor(CancellationToken cancellationToken = default) => throw new NotImplementedException();
 

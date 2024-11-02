@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using kawaii.twitter.db;
@@ -10,10 +11,10 @@ namespace kawaii.twitter.core.SelectLogic.FindPageForBlob
 {
 	public class FindPageByBlobName: IFindPageByBlobName
 	{
-		IMongoQueryable<SitePage> _Pages;
+		IQueryable<SitePage> _Pages;
 		IBlobNameToURLPart _BlobNameToURLPart;
 
-		public FindPageByBlobName(IMongoQueryable<SitePage> pages, IBlobNameToURLPart blobNameToURLPart)
+		public FindPageByBlobName(IQueryable<SitePage> pages, IBlobNameToURLPart blobNameToURLPart)
 		{
 			_Pages = pages ?? throw new ArgumentNullException(nameof(pages));
 			_BlobNameToURLPart = blobNameToURLPart ?? throw new ArgumentNullException(nameof(blobNameToURLPart));
