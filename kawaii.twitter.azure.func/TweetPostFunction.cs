@@ -32,7 +32,7 @@ namespace kawaii.twitter.azure.func
 		static HttpClient _HttpClient = new HttpClient();
 
 		[FunctionName("TweetPostFunction")]
-		public static async Task Run([TimerTrigger("0 0 */2 * * *")] TimerInfo timer, ILogger log)
+		public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer, ILogger log)
 		{
 			//https://docs.microsoft.com/ru-ru/azure/azure-functions/functions-bindings-timer?tabs=csharp#ncrontab-expressions
 			//0 */5 * * * * - каждые 5 мин
@@ -42,6 +42,9 @@ namespace kawaii.twitter.azure.func
 			Logger logger = new Logger(log);
 
 			logger.Log($"TweetPostFunction executed at: {DateTime.Now}");
+
+			await _TestHttp(logger);
+			return;//!!!
 
 			string animatedBlobConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_animatedblob");
 			string azureSiteDBConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_sitepages");
@@ -149,5 +152,24 @@ namespace kawaii.twitter.azure.func
 			//выполнить твит заданной страницы и изображения
 			await tweetCreator.Execute();
 		}
+
+		static async Task _TestHttp(Logger log)
+		{
+			HttpResponseMessage response = await _HttpClient.GetAsync("https://google.com");
+
+			// Проверяем статус ответа
+			if (response.IsSuccessStatusCode)
+			{
+				// Получаем HTML-код страницы
+				string htmlContent = await response.Content.ReadAsStringAsync();
+				log.Log("Страница успешно получена:");
+				log.Log(htmlContent.Take(40).ToString());
+			}
+			else
+			{
+				log.LogError($"Ошибка: статус {response.StatusCode}");
+			}
+		}
+
     }
 }
