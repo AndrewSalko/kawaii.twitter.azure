@@ -32,7 +32,7 @@ namespace kawaii.twitter.azure.func
 		static HttpClient _HttpClient = new HttpClient();
 
 		[FunctionName("TweetPostFunction")]
-		public static async Task Run([TimerTrigger("0 */5 * * * *")] TimerInfo timer, ILogger log)
+		public static async Task Run([TimerTrigger("0 0 */2 * * *")] TimerInfo timer, ILogger log)
 		{
 			//https://docs.microsoft.com/ru-ru/azure/azure-functions/functions-bindings-timer?tabs=csharp#ncrontab-expressions
 			//0 */5 * * * * - каждые 5 мин
@@ -43,8 +43,8 @@ namespace kawaii.twitter.azure.func
 
 			logger.Log($"TweetPostFunction executed at: {DateTime.Now}");
 
-			await _TestHttp(logger);
-			return;//!!!
+			//await _TestHttp(logger);
+			//return;//!!!
 
 			string animatedBlobConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_animatedblob");
 			string azureSiteDBConnectionString = kawaii.twitter.core.Env.EnvironmentSecureData.GetValueFromEnvironment("env:kawaii_twitter_azure_sitepages");
