@@ -121,10 +121,10 @@ namespace kawaii.twitter.azure.func
 		{
 			get
 			{
-				//Щоб кожного часу не "перезапитувати" оновлення, ми будемо це робити 2 рази на добу
-				int hour = DateTime.Now.Hour;
-
-				if (hour == 1 || hour == 13)
+				//Щоб кожного часу не "перезапитувати" оновлення, ми будемо це робити випадково (будет приблизно раз-два на добу)
+				var r = new Random(Environment.TickCount);
+				int v = r.Next(23);
+				if (v == 0 || v == 12)
 				{
 					return true;
 				}
